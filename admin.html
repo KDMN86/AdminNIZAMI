@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- LOGIN CONTAINER -->
+    <div class="container" id="loginContainer">
+      <h2>Login Admin</h2>
+      <input
+        type="password"
+        id="adminPassword"
+        placeholder="Masukkan Password Admin"
+      />
+      <button onclick="login()">Login</button>
+      <p id="loginError" style="color: red; display: none">Password salah!</p>
+    </div>
+
+    <!-- ADMIN PANEL (TERSEMBUNYI) -->
+    <div class="container hidden" id="adminPanel">
+      <h2>Admin Panel</h2>
+
+      <div class="tab-buttons">
+        <button onclick="switchTab('setoran')" class="active">
+          Tambah Setoran
+        </button>
+        <button onclick="switchTab('peserta')">Tambah Peserta</button>
+      </div>
+
+      <!-- Form Tambah Setoran (FITUR FILTER) -->
+      <div class="form-container active" id="formSetoran">
+        <h3>Tambah Setoran Peserta</h3>
+
+        <!-- Pilihan kolom filter -->
+        <select id="filterType">
+          <option value="no">No Urut</option>
+          <option value="id" selected>ID Peserta</option>
+          <option value="nama">Nama Peserta</option>
+          <option value="grup">Grup ID</option>
+        </select>
+
+        <!-- Input kata kunci -->
+        <input type="text" id="filterValue" placeholder="Masukkan kata kunci" />
+        <button onclick="cariPeserta()">Cari Peserta</button>
+        <button class="reset-btn" onclick="resetFilter()">Reset</button>
+
+        <!-- Hasil pencarian peserta -->
+        <div id="hasilPencarian" class="updated-container hidden"></div>
+
+        <div id="updatedParticipant" class="updated-container hidden"></div>
+      </div>
+
+      <!-- Form Tambah Peserta -->
+      <div class="form-container" id="formPeserta">
+        <h3>Tambah Peserta Baru</h3>
+        <input type="text" id="idPesertaBaru" placeholder="ID Peserta" />
+        <input type="text" id="namaPeserta" placeholder="Nama" />
+
+        <!-- Dropdown Jenis Paket -->
+        <select id="jenisPaket" onchange="updateNilaiTotal()">
+          <option value="" disabled selected>Pilih Jenis Paket</option>
+          <option value="Munggah 5000">Munggah 5000</option>
+          <option value="Munggah Hemat">Munggah Hemat</option>
+          <option value="Lebaran Wow">Lebaran Wow</option>
+          <option value="Mom 5000">Mom 5000</option>
+          <option value="Lebaran Sembako">Lebaran Sembako</option>
+          <option value="Kue Kaleng">Kue Kaleng</option>
+          <option value="Kids 3500">Kids 3500</option>
+          <option value="Kids 3000">Kids 3000</option>
+          <option value="Kids 2000">Kids 2000</option>
+          <option value="Kids 1000">Kids 1000</option>
+          <option value="Cookies">Cookies</option>
+          <option value="Mingguan">Mingguan</option>
+        </select>
+
+        <input type="text" id="nilaiSetoran" placeholder="Nilai Setoran" />
+        <input type="number" id="totalSetoran" placeholder="Total Setoran" />
+        <input type="text" id="grupID" placeholder="Grup ID" />
+        <button onclick="tambahPeserta()">Tambah Peserta</button>
+        <button class="reset-btn" onclick="resetForm('peserta')">Reset</button>
+        <p id="pesertaStatus" class="status"></p>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,115 @@
+/* === Style Dasar === */
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 15px;
+  background: #f4f4f4;
+}
+.container {
+  max-width: 400px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+h2 {
+  color: #007bff;
+}
+.hidden {
+  display: none;
+}
+input,
+select,
+button {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+button {
+  background: #28a745;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+button:hover {
+  background: #218838;
+}
+.reset-btn {
+  background: #dc3545;
+}
+.reset-btn:hover {
+  background: #c82333;
+}
+.status {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  display: none;
+}
+.success {
+  background: #d4edda;
+  color: #155724;
+}
+.error {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* === Bagian Admin Panel === */
+.tab-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+.tab-buttons button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: #007bff;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.tab-buttons button.active {
+  background: #0056b3;
+}
+.form-container {
+  display: none;
+  padding: 15px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.form-container.active {
+  display: block;
+}
+
+/* Container menampilkan data terbaru / hasil pencarian */
+.updated-container {
+  margin-top: 20px;
+  padding: 15px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+.updated-item {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+.updated-item:last-child {
+  border-bottom: none;
+}
+.label {
+  font-weight: bold;
+  color: #007bff;
+}
