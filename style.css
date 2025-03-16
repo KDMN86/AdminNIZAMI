@@ -1,23 +1,37 @@
+/* Import Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
 /* === Style Dasar === */
 * {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 body {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  padding: 15px;
-  background: #f4f4f4;
+  background: url('bg.jpg') no-repeat center center fixed;
+  background-size: cover;
+  /* background-color: #000; */
+  width: 100%;
+  height: 100vh;
+  justify-content: flex-start;
+  padding-top: 20px;
 }
 .container {
+  background: rgba(3, 3, 3, 0.3);
+  width: 90%;
   max-width: 400px;
   margin: auto;
-  background: white;
   padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  border: 3px solid rgba(225, 225, 225, 0.1);
+  box-shadow: 0px 0px 30px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  color: #ffffff;
 }
 h2 {
-  color: #007bff;
+  color: #ffffff;
+  text-align: center;
 }
 .hidden {
   display: none;
@@ -30,7 +44,7 @@ button {
   margin: 5px 0;
   border-radius: 5px;
   border: 1px solid #ccc;
-  font-size: 16px;
+  font-size: 1rem;
 }
 button {
   background: #28a745;
@@ -55,7 +69,7 @@ button:hover {
   display: none;
 }
 .success {
-  background: #d4edda;
+  background: #54e476;
   color: #155724;
 }
 .error {
@@ -67,27 +81,29 @@ button:hover {
 .tab-buttons {
   display: flex;
   justify-content: space-between;
+  gap: 10px;
   margin-bottom: 15px;
 }
 .tab-buttons button {
   flex: 1;
   padding: 10px;
   border: none;
-  background: #007bff;
-  color: white;
+  background: #054614;
+  color: rgba(54, 252, 123, 0.3);
   font-size: 16px;
   cursor: pointer;
   transition: 0.3s;
 }
 .tab-buttons button.active {
-  background: #0056b3;
+  background: #25d14d;
+  color: #000;
 }
 .form-container {
   display: none;
   padding: 15px;
-  background: #fff;
+  background: rgba(225, 225, 225, 0.1);
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 }
 .form-container.active {
   display: block;
@@ -97,9 +113,9 @@ button:hover {
 .updated-container {
   margin-top: 20px;
   padding: 15px;
-  background: white;
+  background: rgba(0, 0, 0, 0.51);
   border-radius: 10px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 5px rgb(255, 255, 255);
   text-align: left;
 }
 .updated-item {
@@ -110,6 +126,6 @@ button:hover {
   border-bottom: none;
 }
 .label {
-  font-weight: bold;
-  color: #007bff;
+  color: #7aeaf7;
+  font-size: 1rem;
 }
