@@ -2,7 +2,7 @@
 const ADMIN_PASSWORD = 'admin123'; // Samakan dengan server side (opsional)
 // Ganti dengan URL Web App Apps Script
 const scriptURL =
-  'https://script.google.com/macros/s/AKfycbwwuMCH4hAjBNaGUSHd9bKi6mCr7efCTwgCV9uGWulDugCALe1k1Uahl1RHmFt_Tofn/exec';
+  'https://script.google.com/macros/s/AKfycby59mwIVH_ZZFCgpzMcu5FWQCaSCSOh5E5aouDS_19u3eHkXISF2L9YBAAu_UnBnRVG/exec';
 
 // Mapping paket -> Nilai (string) & Total (string/number)
 const paketMapping = {
