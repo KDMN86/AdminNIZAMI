@@ -56,8 +56,8 @@ function switchTab(tab) {
 
 // ===================== UPDATE NILAI & TOTAL =====================
 function updateNilaiTotal() {
-  // const jenisPaket = document.getElementById('jenisPaket').value;
-  // const nilaiSetoranInput = document.getElementById('nilaiSetoran');
+  const jenisPaket = document.getElementById('jenisPaket').value;
+  const nilaiSetoranInput = document.getElementById('nilaiSetoran');
   const totalSetoranInput = document.getElementById('totalSetoran');
 
   if (paketMapping[jenisPaket]) {
