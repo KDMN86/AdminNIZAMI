@@ -2,7 +2,7 @@
 const ADMIN_PASSWORD = 'admin123'; // Samakan dengan server side (opsional)
 // Ganti dengan URL Web App Apps Script
 const scriptURL =
-  'https://script.google.com/macros/s/AKfycby59mwIVH_ZZFCgpzMcu5FWQCaSCSOh5E5aouDS_19u3eHkXISF2L9YBAAu_UnBnRVG/exec';
+  'https://script.google.com/macros/s/AKfycbw_PcTn8xNuOROgP0SZ6WIaR4PF--GwbqYGLmOFk2eeEB-jANDA7V8fin9eogE9zAo/exec';
 
 // Mapping paket -> Nilai (string) & Total (string/number)
 const paketMapping = {
@@ -24,11 +24,9 @@ const paketMapping = {
 function login() {
   let inputPassword = document.getElementById('adminPassword').value.trim();
   if (inputPassword === ADMIN_PASSWORD) {
-    // Password benar
     document.getElementById('loginContainer').classList.add('hidden');
     document.getElementById('adminPanel').classList.remove('hidden');
   } else {
-    // Password salah
     document.getElementById('loginError').style.display = 'block';
   }
 }
@@ -71,16 +69,15 @@ function updateNilaiTotal() {
 
 // ===================== FILTER PENCARIAN PESERTA =====================
 function cariPeserta() {
-  let filterType = document.getElementById('filterType').value; // no / id / nama / grup
+  let filterType = document.getElementById('filterType').value;
   let filterValue = document.getElementById('filterValue').value.trim();
   if (!filterValue) {
     alert('Masukkan kata kunci pencarian!');
     return;
   }
-
-  // Kita kirim param filterType & filterValue ke server
-  // Contoh: ?filterType=no&q=123
-  fetch(`${scriptURL}?filterType=${filterType}&q=${filterValue}`)
+  fetch(
+    `${scriptURL}?filterType=${filterType}&q=${encodeURIComponent(filterValue)}`
+  )
     .then((res) => res.json())
     .then((data) => {
       let hasilDiv = document.getElementById('hasilPencarian');
@@ -98,7 +95,6 @@ function cariPeserta() {
     });
 }
 
-// Menampilkan hasil pencarian & tombol tambah setoran
 function tampilkanHasilPencarian(data) {
   let html = `<h3>Hasil Pencarian</h3>`;
   data.forEach((peserta) => {
@@ -118,7 +114,7 @@ function tampilkanHasilPencarian(data) {
   document.getElementById('hasilPencarian').innerHTML = html;
 }
 
-// Tambah setoran dari hasil pencarian
+// ===================== TAMBAH SETORAN (DARI HASIL PENCARIAN) =====================
 function tambahSetoranPeserta(idPeserta) {
   let jumlahSetoran = document
     .getElementById(`setoran-${idPeserta}`)
@@ -127,17 +123,14 @@ function tambahSetoranPeserta(idPeserta) {
     alert('Masukkan jumlah setoran!');
     return;
   }
-
   let formData = new FormData();
   formData.append('action', 'addSetoran');
   formData.append('idPeserta', idPeserta);
   formData.append('setoranBaru', jumlahSetoran);
-
   fetch(scriptURL, { method: 'POST', body: formData })
     .then((res) => res.json())
     .then((data) => {
       if (data.success) {
-        // Setelah sukses, ambil data terbaru & tampilkan di container
         fetchUpdatedData(idPeserta);
       } else {
         alert(data.error);
@@ -148,13 +141,12 @@ function tambahSetoranPeserta(idPeserta) {
     });
 }
 
-// Fungsi mengambil data terbaru (by ID Peserta) dari server
+// ===================== AMBIL DATA TERBARU (BY ID PESERTA) =====================
 function fetchUpdatedData(idPeserta) {
   fetch(`${scriptURL}?id=${idPeserta}`)
     .then((r) => r.json())
     .then((data) => {
       if (data.error) {
-        // Jika error, tampilkan di container
         document.getElementById(
           'updatedParticipant'
         ).innerHTML = `<p style="color:red;">${data.error}</p>`;
@@ -162,7 +154,6 @@ function fetchUpdatedData(idPeserta) {
           .getElementById('updatedParticipant')
           .classList.remove('hidden');
       } else {
-        // Jika sukses, panggil fungsi untuk menampilkan data
         showUpdatedParticipant(data);
       }
     })
@@ -174,7 +165,7 @@ function fetchUpdatedData(idPeserta) {
     });
 }
 
-// Menampilkan data terbaru di container #updatedParticipant
+// ===================== TAMPILKAN DATA TERBARU =====================
 function showUpdatedParticipant(data) {
   let container = document.getElementById('updatedParticipant');
   let html = `<h3>Data Terbaru Peserta</h3>`;
@@ -197,7 +188,6 @@ function showUpdatedParticipant(data) {
 }
 
 // ===================== TAMBAH SETORAN (SATU PESERTA) =====================
-// (Jika admin isi ID Peserta + Jumlah setoran langsung, tanpa filter)
 function tambahSetoran() {
   let idPeserta = document.getElementById('idPesertaSetoran').value.trim();
   let setoranBaru = document.getElementById('setoranBaru').value.trim();
@@ -218,7 +208,6 @@ function tambahSetoran() {
     .then((data) => {
       if (data.success) {
         tampilkanStatus(statusEl, data.success, 'success');
-        // Ambil data terbaru (opsional)
         fetchUpdatedData(idPeserta);
       } else {
         tampilkanStatus(statusEl, data.error, 'error');
@@ -285,13 +274,9 @@ function tampilkanStatus(element, message, type) {
 // ===================== RESET FILTER =====================
 function resetFilter() {
   document.getElementById('filterValue').value = '';
-
-  // Sembunyikan & hapus isi hasil pencarian
   let hasilDiv = document.getElementById('hasilPencarian');
   hasilDiv.classList.add('hidden');
   hasilDiv.innerHTML = '';
-
-  // Sembunyikan & hapus isi data terbaru
   let updatedDiv = document.getElementById('updatedParticipant');
   updatedDiv.classList.add('hidden');
   updatedDiv.innerHTML = '';
@@ -308,7 +293,6 @@ function resetForm(type) {
     document
       .querySelectorAll('#formSetoran input')
       .forEach((input) => (input.value = ''));
-    // Sembunyikan data container
     document.getElementById('updatedParticipant').classList.add('hidden');
     document.getElementById('updatedParticipant').innerHTML = '';
   }
