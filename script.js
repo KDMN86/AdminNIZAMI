@@ -1,23 +1,21 @@
 // ===================== KONFIGURASI =====================
-const ADMIN_PASSWORD = 'admin123'; // Samakan dengan server side (opsional)
-// Ganti dengan URL Web App Apps Script
+const ADMIN_PASSWORD = 'admin123'; // (Opsional)
 const scriptURL =
-  'https://script.google.com/macros/s/AKfycbw_PcTn8xNuOROgP0SZ6WIaR4PF--GwbqYGLmOFk2eeEB-jANDA7V8fin9eogE9zAo/exec';
+  'https://script.google.com/macros/s/AKfycbxW5DF6DqaG_6gjRz5ChqaempbSj8KbRqZW8M1ySMiUA9acqvE5fz5MZuLjCWtoLJLi/exec';
 
-// Mapping paket -> Nilai (string) & Total (string/number)
 const paketMapping = {
-  'Munggah 5000': { nilai: '5000', total: '300' },
-  'Munggah Hemat': { nilai: '3000', total: '300' },
-  'Lebaran Wow': { nilai: '10000', total: '330' },
-  'Mom 5000': { nilai: '5000', total: '330' },
-  'Lebaran Sembako': { nilai: '5000', total: '330' },
-  'Kue Kaleng': { nilai: '5000', total: '330' },
-  'Kids 3500': { nilai: '3500', total: '330' },
-  'Kids 3000': { nilai: '3000', total: '330' },
-  'Kids 2000': { nilai: '2000', total: '330' },
-  'Kids 1000': { nilai: '1000', total: '330' },
-  Cookies: { nilai: '1000', total: '330' },
-  Mingguan: { nilai: '', total: '40' },
+  'Munggah 5000': { nilai: '5000', barang: '200', total: '300' },
+  'Munggah Hemat': { nilai: '3000', barang: '200', total: '300' },
+  'Lebaran Wow': { nilai: '10000', barang: '130', total: '330' },
+  'Mom 5000': { nilai: '5000', barang: '130', total: '330' },
+  'Lebaran Sembako': { nilai: '5000', barang: '180', total: '330' },
+  'Kue Kaleng': { nilai: '5000', barang: '180', total: '330' },
+  'Kids 3500': { nilai: '3500', barang: '130', total: '330' },
+  'Kids 3000': { nilai: '3000', barang: '130', total: '330' },
+  'Kids 2000': { nilai: '2000', barang: '155', total: '330' },
+  'Kids 1000': { nilai: '1000', barang: '230', total: '330' },
+  Cookies: { nilai: '1000', barang: '230', total: '330' },
+  Mingguan: { nilai: '', barang: '0', total: '40' },
 };
 
 // ===================== FUNGSI LOGIN =====================
@@ -56,25 +54,29 @@ function switchTab(tab) {
 function updateNilaiTotal() {
   const jenisPaket = document.getElementById('jenisPaket').value;
   const nilaiSetoranInput = document.getElementById('nilaiSetoran');
+  const setoranBarangInput = document.getElementById('setoranBarang'); // Pastikan ada input dengan id ini di HTML
   const totalSetoranInput = document.getElementById('totalSetoran');
 
   if (paketMapping[jenisPaket]) {
     nilaiSetoranInput.value = paketMapping[jenisPaket].nilai;
+    setoranBarangInput.value = paketMapping[jenisPaket].barang;
     totalSetoranInput.value = paketMapping[jenisPaket].total;
   } else {
     nilaiSetoranInput.value = '';
+    setoranBarangInput.value = '';
     totalSetoranInput.value = '';
   }
 }
 
 // ===================== FILTER PENCARIAN PESERTA =====================
 function cariPeserta() {
-  let filterType = document.getElementById('filterType').value;
+  let filterType = document.getElementById('filterType').value; // no / id / nama / grup
   let filterValue = document.getElementById('filterValue').value.trim();
   if (!filterValue) {
     alert('Masukkan kata kunci pencarian!');
     return;
   }
+
   fetch(
     `${scriptURL}?filterType=${filterType}&q=${encodeURIComponent(filterValue)}`
   )
@@ -114,7 +116,7 @@ function tampilkanHasilPencarian(data) {
   document.getElementById('hasilPencarian').innerHTML = html;
 }
 
-// ===================== TAMBAH SETORAN (DARI HASIL PENCARIAN) =====================
+// ===================== TAMBAH SETORAN DARI HASIL PENCARIAN =====================
 function tambahSetoranPeserta(idPeserta) {
   let jumlahSetoran = document
     .getElementById(`setoran-${idPeserta}`)
@@ -127,6 +129,7 @@ function tambahSetoranPeserta(idPeserta) {
   formData.append('action', 'addSetoran');
   formData.append('idPeserta', idPeserta);
   formData.append('setoranBaru', jumlahSetoran);
+
   fetch(scriptURL, { method: 'POST', body: formData })
     .then((res) => res.json())
     .then((data) => {
@@ -141,7 +144,35 @@ function tambahSetoranPeserta(idPeserta) {
     });
 }
 
-// ===================== AMBIL DATA TERBARU (BY ID PESERTA) =====================
+// ===================== TAMBAH SETORAN (LANGSUNG) =====================
+function tambahSetoran() {
+  let idPeserta = document.getElementById('idPesertaSetoran').value.trim();
+  let setoranBaru = document.getElementById('setoranBaru').value.trim();
+  let statusEl = document.getElementById('setoranStatus');
+  if (!idPeserta || !setoranBaru) {
+    tampilkanStatus(statusEl, 'Semua field harus diisi!', 'error');
+    return;
+  }
+  let formData = new FormData();
+  formData.append('action', 'addSetoran');
+  formData.append('idPeserta', idPeserta);
+  formData.append('setoranBaru', setoranBaru);
+  fetch(scriptURL, { method: 'POST', body: formData })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.success) {
+        tampilkanStatus(statusEl, data.success, 'success');
+        fetchUpdatedData(idPeserta);
+      } else {
+        tampilkanStatus(statusEl, data.error, 'error');
+      }
+    })
+    .catch(() => {
+      tampilkanStatus(statusEl, 'Gagal menambahkan setoran!', 'error');
+    });
+}
+
+// ===================== AMBIL DATA TERBARU =====================
 function fetchUpdatedData(idPeserta) {
   fetch(`${scriptURL}?id=${idPeserta}`)
     .then((r) => r.json())
@@ -170,52 +201,30 @@ function showUpdatedParticipant(data) {
   let container = document.getElementById('updatedParticipant');
   let html = `<h3>Data Terbaru Peserta</h3>`;
   data.forEach((peserta) => {
+    let pesanBarang = '';
+    if (
+      peserta.setoranBarang &&
+      Number(peserta.setoranDilakukan) >= Number(peserta.setoranBarang)
+    ) {
+      pesanBarang = `<p style="color:green;font-weight:bold;">Selamat, Anda telah mencapai simpanan barang! Setoran selanjutnya akan menambah ke tabungan uang Anda.</p>`;
+    }
     html += `
-<div class="updated-item">
-  <p><span class="label">No Urut:</span> ${peserta.no}</p>
-  <p><span class="label">ID Peserta:</span> ${peserta.idPeserta}</p>
-  <p><span class="label">Nama:</span> ${peserta.nama}</p>
-  <p><span class="label">Paket:</span> ${peserta.jenisPaket}</p>
-  <p><span class="label">Nilai Setoran:</span> ${peserta.nilaiSetoran}</p>
-  <p><span class="label">Total Setoran:</span> ${peserta.totalSetoran}X</p>
-  <p><span class="label">Setoran Masuk:</span> ${peserta.setoranDilakukan}X</p>
-  <p><span class="label">Sisa Setoran:</span> ${peserta.sisaSetoran}X</p>
-</div>
-`;
+      <div class="updated-item">
+        <p><span class="label">No Urut:</span> ${peserta.no}</p>
+        <p><span class="label">ID Peserta:</span> ${peserta.idPeserta}</p>
+        <p><span class="label">Nama:</span> ${peserta.nama}</p>
+        <p><span class="label">Paket:</span> ${peserta.jenisPaket}</p>
+        <p><span class="label">Nilai Setoran:</span> ${peserta.nilaiSetoran}</p>
+        <p><span class="label">Total Setoran:</span> ${peserta.totalSetoran}X</p>
+        <p><span class="label">Setoran Masuk:</span> ${peserta.setoranDilakukan}X</p>
+        <p><span class="label">Sisa Setoran:</span> ${peserta.sisaSetoran}X</p>
+        <p><span class="label">Setoran Barang:</span> ${peserta.setoranBarang}X</p>
+        ${pesanBarang}
+      </div>
+    `;
   });
   container.innerHTML = html;
   container.classList.remove('hidden');
-}
-
-// ===================== TAMBAH SETORAN (SATU PESERTA) =====================
-function tambahSetoran() {
-  let idPeserta = document.getElementById('idPesertaSetoran').value.trim();
-  let setoranBaru = document.getElementById('setoranBaru').value.trim();
-  let statusEl = document.getElementById('setoranStatus');
-
-  if (!idPeserta || !setoranBaru) {
-    tampilkanStatus(statusEl, 'Semua field harus diisi!', 'error');
-    return;
-  }
-
-  let formData = new FormData();
-  formData.append('action', 'addSetoran');
-  formData.append('idPeserta', idPeserta);
-  formData.append('setoranBaru', setoranBaru);
-
-  fetch(scriptURL, { method: 'POST', body: formData })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.success) {
-        tampilkanStatus(statusEl, data.success, 'success');
-        fetchUpdatedData(idPeserta);
-      } else {
-        tampilkanStatus(statusEl, data.error, 'error');
-      }
-    })
-    .catch(() => {
-      tampilkanStatus(statusEl, 'Gagal menambahkan setoran!', 'error');
-    });
 }
 
 // ===================== TAMBAH PESERTA =====================
@@ -248,6 +257,11 @@ function tambahPeserta() {
   formData.append('nilaiSetoran', nilaiSetoran);
   formData.append('totalSetoran', totalSetoran);
   formData.append('grupID', grupID);
+  // Pastikan data setoran barang dikirim juga
+  formData.append(
+    'setoranBarang',
+    document.getElementById('setoranBarang').value.trim()
+  );
 
   fetch(scriptURL, { method: 'POST', body: formData })
     .then((res) => res.json())
