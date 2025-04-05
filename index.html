@@ -16,7 +16,7 @@
         placeholder="Masukkan Password Admin"
       />
       <button onclick="login()">Login</button>
-      <p id="loginError" style="color: red; display: none">Password salah!</p>
+      <p id="loginError" class="error" style="display: none">Password salah!</p>
     </div>
 
     <!-- ADMIN PANEL (TERSEMBUNYI) -->
@@ -33,23 +33,18 @@
       <!-- Form Tambah Setoran (FITUR FILTER) -->
       <div class="form-container active" id="formSetoran">
         <h3>Tambah Setoran Peserta</h3>
-
-        <!-- Pilihan kolom filter -->
         <select id="filterType">
           <option value="no">No Urut</option>
           <option value="id" selected>ID Peserta</option>
           <option value="nama">Nama Peserta</option>
           <option value="grup">Grup ID</option>
         </select>
-
-        <!-- Input kata kunci -->
         <input type="text" id="filterValue" placeholder="Masukkan kata kunci" />
         <button onclick="cariPeserta()">Cari Peserta</button>
         <button class="reset-btn" onclick="resetFilter()">Reset</button>
-
         <!-- Hasil pencarian peserta -->
         <div id="hasilPencarian" class="updated-container hidden"></div>
-
+        <!-- Container data peserta terbaru setelah penambahan setoran -->
         <div id="updatedParticipant" class="updated-container hidden"></div>
       </div>
 
@@ -76,12 +71,27 @@
           <option value="Mingguan">Mingguan</option>
         </select>
 
-        <input type="text" id="nilaiSetoran" placeholder="Nilai Setoran" />
+        <input
+          type="text"
+          id="nilaiSetoran"
+          placeholder="Nilai Setoran"
+          readonly
+        />
+        <input
+          type="text"
+          id="setoranBarang"
+          placeholder="Setoran Barang"
+          readonly
+        />
         <input type="number" id="totalSetoran" placeholder="Total Setoran" />
         <input type="text" id="grupID" placeholder="Grup ID" />
         <button onclick="tambahPeserta()">Tambah Peserta</button>
         <button class="reset-btn" onclick="resetForm('peserta')">Reset</button>
-        <p id="pesertaStatus" class="status"></p>
+        <p id="pesertaStatus" class="status hidden"></p>
+        <!-- Pesan sukses tambahan -->
+        <div id="successMessage" class="hidden">
+          <p id="successText"></p>
+        </div>
       </div>
     </div>
 
