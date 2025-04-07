@@ -3,6 +3,7 @@ const ADMIN_PASSWORD = 'admin123'; // (Opsional)
 const scriptURL =
   'https://script.google.com/macros/s/AKfycbxW5DF6DqaG_6gjRz5ChqaempbSj8KbRqZW8M1ySMiUA9acqvE5fz5MZuLjCWtoLJLi/exec';
 
+// Mapping paket (gunakan sesuai kebutuhan)
 const paketMapping = {
   'Munggah 5000': { nilai: '5000', barang: '200', total: '300' },
   'Munggah Hemat': { nilai: '3000', barang: '200', total: '300' },
@@ -18,9 +19,123 @@ const paketMapping = {
   Mingguan: { nilai: '', barang: '0', total: '40' },
 };
 
+// ===================== DAFTAR BARANG UNTUK PAKET MINGGUAN =====================
+// Pastikan data ini sesuai dengan brosur yang Anda miliki
+const barangMingguan = [
+  // Kategori Mie
+  { category: 'Mie', name: 'Indomie Ayam Bawang', price: 3200 },
+  { category: 'Mie', name: 'Indomie Soto', price: 3200 },
+  { category: 'Mie', name: 'Indomie Goreng Bawang', price: 3500 },
+  { category: 'Mie', name: 'Indomie Goreng Rendang', price: 3500 },
+  { category: 'Mie', name: 'Indomie Goreng Rica-rica', price: 3500 },
+  { category: 'Mie', name: 'Indomie Goreng Aceh', price: 3500 },
+  { category: 'Mie', name: 'Indomie Goreng Cabe Ijo', price: 3500 },
+  { category: 'Mie', name: 'Indomie Goreng Ayam Geprek', price: 3500 },
+  { category: 'Mie', name: 'Indomie Goreng Ayam Pop', price: 3500 },
+  { category: 'Mie', name: 'Indomie Empal Gentong', price: 3500 },
+  { category: 'Mie', name: 'Indomie Kocok Bandung', price: 3500 },
+  { category: 'Mie', name: 'Mie Sedap Goreng', price: 3500 },
+  { category: 'Mie', name: 'Mie Sedap Bawang', price: 3500 },
+  { category: 'Mie', name: 'Mie Sedaap Baked Soto', price: 3500 },
+  { category: 'Mie', name: 'Mie Sedaap Baked Goreng', price: 3500 },
+  { category: 'Mie', name: 'Mie Sedaap Ayam Jerit', price: 3000 },
+  { category: 'Mie', name: 'Mie Sedaap Korean Spicy', price: 3000 },
+  { category: 'Mie', name: 'Mie Sedaap Kare Kental', price: 3000 },
+  { category: 'Mie', name: 'Mie Sedap Ayam Bawang', price: 3000 },
+  { category: 'Mie', name: 'Mie Sedap Soto', price: 3000 },
+  { category: 'Mie', name: 'Mie Sukses Goreng Rendang', price: 4000 },
+  { category: 'Mie', name: 'Mie Sukses Ayam Bawang Kuah', price: 4000 },
+  { category: 'Mie', name: 'Mie Sukses Goreng Kecap', price: 4000 },
+  { category: 'Mie', name: 'Mie Sukses Goreng Kriuk', price: 4000 },
+  { category: 'Mie', name: 'Mie Oven Goreng', price: 3000 },
+  { category: 'Mie', name: 'Mie Oven Kuah', price: 3000 },
+  { category: 'Mie', name: 'Pop Mie Ayam Besar', price: 3200 },
+  { category: 'Mie', name: 'Pop Mie Bakso Besar', price: 3200 },
+  { category: 'Mie', name: 'Pop Mie Gledek', price: 3500 },
+  { category: 'Mie', name: 'Pop Mie Goreng', price: 3500 },
+  { category: 'Mie', name: 'Pop Mie Ayam Kecil', price: 2500 },
+  { category: 'Mie', name: 'Pop Mie Bakso Kecil', price: 2500 },
+
+  // Kategori Sembako
+  { category: 'Sembako', name: 'Beras Super 25 kg', price: 10000 },
+  { category: 'Sembako', name: 'Beras Super 10 kg', price: 5000 },
+  {
+    category: 'Sembako',
+    name: 'Minyak Goreng Bimoli 5L (Kompan)',
+    price: 3750,
+  },
+  { category: 'Sembako', name: 'Minyak Goreng kemasan 2L  1 pc', price: 1500 },
+  {
+    category: 'Sembako',
+    name: 'Minyak Goreng Kemasan 2L (1 Karton)',
+    price: 7500,
+  },
+  { category: 'Sembako', name: 'Kecap Bango 550 ml', price: 800 },
+  { category: 'Sembako', name: 'Kecap ABC 520 ml', price: 750 },
+  { category: 'Sembako', name: 'Kecap Sedap 600 ml', price: 700 },
+  { category: 'Sembako', name: 'Royco Ayam 230 gr', price: 400 },
+  { category: 'Sembako', name: 'Royco Sapi 230 gr', price: 400 },
+  { category: 'Sembako', name: 'Totole kaldu jamur 200 gr', price: 750 },
+  { category: 'Sembako', name: 'VetSin Sasa 250 gr', price: 500 },
+  { category: 'Sembako', name: 'Gula Pasir 1 kg', price: 600 },
+  { category: 'Sembako', name: 'Gula Kawung 1 kg', price: 900 },
+  { category: 'Sembako', name: 'Kerupuk Udang MP 1 kg', price: 1200 },
+  { category: 'Sembako', name: 'Kerupuk Udang 1 Karton', price: 5000 },
+  { category: 'Sembako', name: 'Emping 1 kg', price: 3000 },
+  { category: 'Sembako', name: 'Ranginang 1 kg', price: 1500 },
+  { category: 'Sembako', name: 'Kerupuk Kemplang 1 ball', price: 1900 },
+  { category: 'Sembako', name: 'Kerupuk Kemplang 1 Kg', price: 600 },
+  { category: 'Sembako', name: 'Kacang kupas 1 kg', price: 1250 },
+  { category: 'Sembako', name: 'Kacang kupas 500 gr', price: 625 },
+  { category: 'Sembako', name: 'Terigu Segitiga Biru 1 kg', price: 450 },
+  { category: 'Sembako', name: 'Terigu Kunci Biru 1 kg', price: 450 },
+  { category: 'Sembako', name: 'Terigu Cakra Kembar 1 kg', price: 550 },
+  { category: 'Sembako', name: 'Mentega Blueband 200 gr', price: 400 },
+  { category: 'Sembako', name: 'Mentega Palmia 200 gr', price: 300 },
+
+  // Kategori Daging
+  { category: 'Daging', name: 'Daging Super 1 kg', price: 4000 },
+  { category: 'Daging', name: 'Tulang Iga Gondrong 1 kg', price: 3250 },
+  { category: 'Daging', name: 'Daging Iga 1 kg', price: 4000 },
+  { category: 'Daging', name: 'Cokor Sapi 1 kg', price: 5000 },
+  { category: 'Daging', name: 'Paha Sapi 1 kg', price: 3750 },
+  { category: 'Daging', name: 'Kepala Sapi 1 kg', price: 2750 },
+  { category: 'Daging', name: 'Daging Ayam 1 kg', price: 1250 },
+
+  // Kategori Kue Kaleng
+  { category: 'Kue Kaleng', name: 'Kue Monde Besar', price: 4600 },
+  { category: 'Kue Kaleng', name: 'Kue Monde Kecil', price: 2300 },
+  { category: 'Kue Kaleng', name: 'Kue Monde Eggroll Besar', price: 3000 },
+  { category: 'Kue Kaleng', name: 'Kue Monde Eggroll Kecil', price: 2200 },
+  { category: 'Kue Kaleng', name: 'Kue Khongguan Besar', price: 3250 },
+  { category: 'Kue Kaleng', name: 'Kue Khongguan Kecil', price: 2200 },
+  { category: 'Kue Kaleng', name: 'Kue Wafer Tango Coklat', price: 1750 },
+  { category: 'Kue Kaleng', name: 'Kue Wafer Tango Vanila', price: 1750 },
+  { category: 'Kue Kaleng', name: 'Kue Wafer Nissin', price: 2000 },
+  { category: 'Kue Kaleng', name: 'Kue Astor Kaleng Kecil', price: 1000 },
+  { category: 'Kue Kaleng', name: 'Kue Astor Aladin Blek', price: 6250 },
+  { category: 'Kue Kaleng', name: 'Kue Wafer Aladin Blek', price: 6000 },
+
+  // Kategori Minuman
+  { category: 'Minuman', name: 'SKM Frisian Flag pouch 545 ml', price: 625 },
+  { category: 'Minuman', name: 'Susu Frisian Flag 1 L', price: 600 },
+  { category: 'Minuman', name: 'Pocari Sweet 2 L', price: 650 },
+  { category: 'Minuman', name: 'ABC Squash deligh 1 botol', price: 400 },
+  { category: 'Minuman', name: 'ABC Special Gread 1 botol', price: 650 },
+  { category: 'Minuman', name: 'Marjan Boudoin', price: 650 },
+  { category: 'Minuman', name: 'Fanta 1,5L', price: 500 },
+  { category: 'Minuman', name: 'Coca cola 1,5 L', price: 500 },
+  { category: 'Minuman', name: 'Sprite 1,5L', price: 500 },
+  { category: 'Minuman', name: 'Teh Pucuk 1 L', price: 400 },
+];
+
+// Objek untuk menyimpan pesanan (kuantitas) peserta
+// Format: { "Nama Barang": { quantity, price } }
+let selectedItems = {};
+
 // ===================== FUNGSI LOGIN =====================
 function login() {
-  let inputPassword = document.getElementById('adminPassword').value.trim();
+  const inputPassword = document.getElementById('adminPassword').value.trim();
   if (inputPassword === ADMIN_PASSWORD) {
     document.getElementById('loginContainer').classList.add('hidden');
     document.getElementById('adminPanel').classList.remove('hidden');
@@ -54,24 +169,174 @@ function switchTab(tab) {
 function updateNilaiTotal() {
   const jenisPaket = document.getElementById('jenisPaket').value;
   const nilaiSetoranInput = document.getElementById('nilaiSetoran');
-  const setoranBarangInput = document.getElementById('setoranBarang'); // Pastikan ada input dengan id ini di HTML
+  const setoranBarangInput = document.getElementById('setoranBarang');
   const totalSetoranInput = document.getElementById('totalSetoran');
+  const barangContainer = document.getElementById('barangContainer');
 
-  if (paketMapping[jenisPaket]) {
-    nilaiSetoranInput.value = paketMapping[jenisPaket].nilai;
-    setoranBarangInput.value = paketMapping[jenisPaket].barang;
-    totalSetoranInput.value = paketMapping[jenisPaket].total;
-  } else {
+  if (jenisPaket === 'Mingguan') {
+    // Jika paket Mingguan, tampilkan container daftar barang dan generate daftar
+    barangContainer.classList.remove('hidden');
+    generateBarangList();
+    // Kosongkan input, karena nilai akan dihitung dari pilihan barang
     nilaiSetoranInput.value = '';
     setoranBarangInput.value = '';
     totalSetoranInput.value = '';
+  } else {
+    // Sembunyikan container barang untuk paket non-Mingguan
+    barangContainer.classList.add('hidden');
+    if (paketMapping[jenisPaket]) {
+      nilaiSetoranInput.value = paketMapping[jenisPaket].nilai;
+      setoranBarangInput.value = paketMapping[jenisPaket].barang;
+      totalSetoranInput.value = paketMapping[jenisPaket].total;
+    } else {
+      nilaiSetoranInput.value = '';
+      setoranBarangInput.value = '';
+      totalSetoranInput.value = '';
+    }
   }
 }
 
+// ===================== GENERATE DAFTAR BARANG (ACCORDION + TOMBOL +/-) =====================
+function generateBarangList() {
+  const barangListDiv = document.getElementById('barangList');
+  barangListDiv.innerHTML = ''; // Bersihkan isi sebelumnya
+
+  // Reset selectedItems
+  selectedItems = {};
+
+  // Kelompokkan barang berdasarkan kategori
+  const categories = {};
+  barangMingguan.forEach((item) => {
+    if (!categories[item.category]) {
+      categories[item.category] = [];
+    }
+    categories[item.category].push(item);
+  });
+
+  // Buat tampilan per kategori sebagai accordion
+  Object.keys(categories).forEach((categoryName) => {
+    // Judul kategori (accordion header)
+    const categoryTitle = document.createElement('h5');
+    categoryTitle.textContent = categoryName.toUpperCase();
+    categoryTitle.className = 'category-title';
+    // Event toggle: klik judul untuk membuka/menutup isi kategori
+    categoryTitle.addEventListener('click', () =>
+      toggleCategory(categoryContentDiv)
+    );
+
+    // Wrapper untuk isi kategori (accordion content)
+    const categoryContentDiv = document.createElement('div');
+    categoryContentDiv.className = 'category-content hidden';
+
+    // Buat setiap item dalam kategori
+    categories[categoryName].forEach((item, idx) => {
+      const itemRow = document.createElement('div');
+      itemRow.className = 'item-row';
+
+      // Nomor urut
+      const itemNo = document.createElement('span');
+      itemNo.textContent = idx + 1 + '.';
+      itemNo.className = 'item-no';
+
+      // Nama barang
+      const itemName = document.createElement('span');
+      itemName.textContent = item.name;
+      itemName.className = 'item-name';
+
+      // Harga
+      const itemPrice = document.createElement('span');
+      itemPrice.textContent = `Rp${item.price}`;
+      itemPrice.className = 'item-price';
+
+      // Tombol “–”
+      const minusBtn = document.createElement('button');
+      minusBtn.textContent = '–';
+      minusBtn.className = 'minus-btn';
+      // Kurangi kuantitas, kemudian update tampilan kuantitas
+      minusBtn.addEventListener('click', () =>
+        decreaseItem(item.name, item.price, qtySpan)
+      );
+
+      // Tampilan kuantitas (angka)
+      const qtySpan = document.createElement('span');
+      qtySpan.textContent = '0';
+      qtySpan.className = 'item-qty';
+
+      // Tombol “+”
+      const plusBtn = document.createElement('button');
+      plusBtn.textContent = '+';
+      plusBtn.className = 'plus-btn';
+      // Tambah kuantitas, kemudian update tampilan kuantitas
+      plusBtn.addEventListener('click', () =>
+        increaseItem(item.name, item.price, qtySpan)
+      );
+
+      itemRow.appendChild(itemNo);
+      itemRow.appendChild(itemName);
+      itemRow.appendChild(itemPrice);
+      itemRow.appendChild(minusBtn);
+      itemRow.appendChild(qtySpan);
+      itemRow.appendChild(plusBtn);
+
+      categoryContentDiv.appendChild(itemRow);
+    });
+
+    // Masukkan judul dan konten kategori ke container utama
+    barangListDiv.appendChild(categoryTitle);
+    barangListDiv.appendChild(categoryContentDiv);
+  });
+}
+
+// ===================== TOGGLE CATEGORY (ACCORDION) =====================
+function toggleCategory(categoryContentDiv) {
+  categoryContentDiv.classList.toggle('hidden');
+}
+
+// ===================== TAMBAH/KURANG KUANTITAS =====================
+function increaseItem(name, price, qtySpan) {
+  if (!selectedItems[name]) {
+    selectedItems[name] = { quantity: 0, price: price };
+  }
+  selectedItems[name].quantity++;
+  qtySpan.textContent = selectedItems[name].quantity;
+  updateTotalSetoranBarang();
+}
+
+function decreaseItem(name, price, qtySpan) {
+  if (!selectedItems[name]) {
+    selectedItems[name] = { quantity: 0, price: price };
+  }
+  if (selectedItems[name].quantity > 0) {
+    selectedItems[name].quantity--;
+  }
+  qtySpan.textContent = selectedItems[name].quantity;
+  updateTotalSetoranBarang();
+}
+
+// ===================== UPDATE TOTAL SETORAN BARANG =====================
+function updateTotalSetoranBarang() {
+  let total = 0;
+  let selectedNames = [];
+
+  for (const itemName in selectedItems) {
+    const { quantity, price } = selectedItems[itemName];
+    if (quantity > 0) {
+      total += quantity * price;
+      selectedNames.push(`${itemName} x${quantity}`);
+    }
+  }
+
+  // Tampilkan total harga barang yang dipilih
+  document.getElementById('totalSetoranBarang').textContent = total;
+  document.getElementById('totalSetoran').value = total;
+  document.getElementById('setoranBarang').value = selectedNames.join(', ');
+}
+
 // ===================== FILTER PENCARIAN PESERTA =====================
+// (Fungsi-fungsi berikutnya tetap sama, sesuai kode Anda sebelumnya)
 function cariPeserta() {
-  let filterType = document.getElementById('filterType').value; // no / id / nama / grup
-  let filterValue = document.getElementById('filterValue').value.trim();
+  const filterType = document.getElementById('filterType').value;
+  const filterValue = document.getElementById('filterValue').value.trim();
   if (!filterValue) {
     alert('Masukkan kata kunci pencarian!');
     return;
@@ -82,7 +347,7 @@ function cariPeserta() {
   )
     .then((res) => res.json())
     .then((data) => {
-      let hasilDiv = document.getElementById('hasilPencarian');
+      const hasilDiv = document.getElementById('hasilPencarian');
       if (data.error) {
         hasilDiv.innerHTML = `<p style="color:red;">${data.error}</p>`;
       } else {
@@ -91,7 +356,7 @@ function cariPeserta() {
       hasilDiv.classList.remove('hidden');
     })
     .catch(() => {
-      let hasilDiv = document.getElementById('hasilPencarian');
+      const hasilDiv = document.getElementById('hasilPencarian');
       hasilDiv.innerHTML = `<p style="color:red;">Terjadi kesalahan!</p>`;
       hasilDiv.classList.remove('hidden');
     });
@@ -105,6 +370,8 @@ function tampilkanHasilPencarian(data) {
         <p><span class="label">No Urut:</span> ${peserta.no}</p>
         <p><span class="label">ID Peserta:</span> ${peserta.idPeserta}</p>
         <p><span class="label">Nama:</span> ${peserta.nama}</p>
+         <p><span class="label">Paket:</span> ${peserta.jenisPaket}</p>
+        <p><span class="label">Nilai Setoran:</span> ${peserta.nilaiSetoran}</p>
         <p><span class="label">Grup ID:</span> ${peserta.grupID}</p>
         <p><span class="label">Setoran Masuk:</span> ${peserta.setoranDilakukan}X</p>
         <p><span class="label">Sisa Setoran:</span> ${peserta.sisaSetoran}X</p>
@@ -116,16 +383,15 @@ function tampilkanHasilPencarian(data) {
   document.getElementById('hasilPencarian').innerHTML = html;
 }
 
-// ===================== TAMBAH SETORAN DARI HASIL PENCARIAN =====================
 function tambahSetoranPeserta(idPeserta) {
-  let jumlahSetoran = document
+  const jumlahSetoran = document
     .getElementById(`setoran-${idPeserta}`)
     .value.trim();
   if (!jumlahSetoran) {
     alert('Masukkan jumlah setoran!');
     return;
   }
-  let formData = new FormData();
+  const formData = new FormData();
   formData.append('action', 'addSetoran');
   formData.append('idPeserta', idPeserta);
   formData.append('setoranBaru', jumlahSetoran);
@@ -144,16 +410,15 @@ function tambahSetoranPeserta(idPeserta) {
     });
 }
 
-// ===================== TAMBAH SETORAN (LANGSUNG) =====================
 function tambahSetoran() {
-  let idPeserta = document.getElementById('idPesertaSetoran').value.trim();
-  let setoranBaru = document.getElementById('setoranBaru').value.trim();
-  let statusEl = document.getElementById('setoranStatus');
+  const idPeserta = document.getElementById('idPesertaSetoran').value.trim();
+  const setoranBaru = document.getElementById('setoranBaru').value.trim();
+  const statusEl = document.getElementById('setoranStatus');
   if (!idPeserta || !setoranBaru) {
     tampilkanStatus(statusEl, 'Semua field harus diisi!', 'error');
     return;
   }
-  let formData = new FormData();
+  const formData = new FormData();
   formData.append('action', 'addSetoran');
   formData.append('idPeserta', idPeserta);
   formData.append('setoranBaru', setoranBaru);
@@ -172,7 +437,6 @@ function tambahSetoran() {
     });
 }
 
-// ===================== AMBIL DATA TERBARU =====================
 function fetchUpdatedData(idPeserta) {
   fetch(`${scriptURL}?id=${idPeserta}`)
     .then((r) => r.json())
@@ -196,7 +460,6 @@ function fetchUpdatedData(idPeserta) {
     });
 }
 
-// ===================== TAMPILKAN DATA TERBARU =====================
 function showUpdatedParticipant(data) {
   let container = document.getElementById('updatedParticipant');
   let html = `<h3>Data Terbaru Peserta</h3>`;
@@ -229,27 +492,20 @@ function showUpdatedParticipant(data) {
 
 // ===================== TAMBAH PESERTA =====================
 function tambahPeserta() {
-  let idPeserta = document.getElementById('idPesertaBaru').value.trim();
-  let nama = document.getElementById('namaPeserta').value.trim();
-  let jenisPaket = document.getElementById('jenisPaket').value;
-  let nilaiSetoran = document.getElementById('nilaiSetoran').value.trim();
-  let totalSetoran = document.getElementById('totalSetoran').value.trim();
-  let grupID = document.getElementById('grupID').value.trim();
-  let statusEl = document.getElementById('pesertaStatus');
+  const idPeserta = document.getElementById('idPesertaBaru').value.trim();
+  const nama = document.getElementById('namaPeserta').value.trim();
+  const jenisPaket = document.getElementById('jenisPaket').value;
+  const nilaiSetoran = document.getElementById('nilaiSetoran').value.trim();
+  const totalSetoran = document.getElementById('totalSetoran').value.trim();
+  const grupID = document.getElementById('grupID').value.trim();
+  const statusEl = document.getElementById('pesertaStatus');
 
-  if (
-    !idPeserta ||
-    !nama ||
-    !jenisPaket ||
-    !nilaiSetoran ||
-    !totalSetoran ||
-    !grupID
-  ) {
+  if (!idPeserta || !nama || !jenisPaket || !totalSetoran || !grupID) {
     tampilkanStatus(statusEl, 'Semua field harus diisi!', 'error');
     return;
   }
 
-  let formData = new FormData();
+  const formData = new FormData();
   formData.append('action', 'addPeserta');
   formData.append('idPeserta', idPeserta);
   formData.append('nama', nama);
@@ -257,7 +513,7 @@ function tambahPeserta() {
   formData.append('nilaiSetoran', nilaiSetoran);
   formData.append('totalSetoran', totalSetoran);
   formData.append('grupID', grupID);
-  // Pastikan data setoran barang dikirim juga
+  // Sertakan data setoran barang (khusus paket Mingguan)
   formData.append(
     'setoranBarang',
     document.getElementById('setoranBarang').value.trim()
@@ -288,10 +544,10 @@ function tampilkanStatus(element, message, type) {
 // ===================== RESET FILTER =====================
 function resetFilter() {
   document.getElementById('filterValue').value = '';
-  let hasilDiv = document.getElementById('hasilPencarian');
+  const hasilDiv = document.getElementById('hasilPencarian');
   hasilDiv.classList.add('hidden');
   hasilDiv.innerHTML = '';
-  let updatedDiv = document.getElementById('updatedParticipant');
+  const updatedDiv = document.getElementById('updatedParticipant');
   updatedDiv.classList.add('hidden');
   updatedDiv.innerHTML = '';
 }
@@ -303,6 +559,8 @@ function resetForm(type) {
       .querySelectorAll('#formPeserta input')
       .forEach((input) => (input.value = ''));
     document.getElementById('jenisPaket').selectedIndex = 0;
+    document.getElementById('barangContainer').classList.add('hidden');
+    document.getElementById('barangList').innerHTML = '';
   } else if (type === 'setoran') {
     document
       .querySelectorAll('#formSetoran input')
