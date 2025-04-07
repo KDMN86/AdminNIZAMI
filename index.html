@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Panel</title>
+    <title>Admin Panel - Paket Mingguan</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -83,7 +83,20 @@
           placeholder="Setoran Barang"
           readonly
         />
-        <input type="number" id="totalSetoran" placeholder="Total Setoran" />
+        <input
+          type="text"
+          id="totalSetoran"
+          placeholder="Total Setoran"
+          readonly
+        />
+
+        <!-- Container daftar barang untuk paket Mingguan -->
+        <div id="barangContainer" class="hidden">
+          <h4>Pilih Barang untuk Setoran</h4>
+          <div id="barangList"></div>
+          <p>Total Setoran Barang: Rp <span id="totalSetoranBarang">0</span></p>
+        </div>
+
         <input type="text" id="grupID" placeholder="Grup ID" />
         <button onclick="tambahPeserta()">Tambah Peserta</button>
         <button class="reset-btn" onclick="resetForm('peserta')">Reset</button>
