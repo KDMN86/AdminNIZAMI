@@ -16,8 +16,8 @@ body {
   background-size: 300px auto;
   width: 100%;
   min-height: 100vh;
-  justify-content: flex-start;
   padding-top: 20px;
+  color: #fff;
 }
 .container {
   background: rgba(3, 3, 3, 0.3);
@@ -29,7 +29,6 @@ body {
   border: 3px solid rgba(225, 225, 225, 0.1);
   box-shadow: 0px 0px 30px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
-  color: #ffffff;
 }
 h2 {
   color: #ffffff;
@@ -111,23 +110,63 @@ button:hover {
   display: block;
 }
 
-/* Container menampilkan data terbaru / hasil pencarian */
-.updated-container {
-  margin-top: 20px;
-  padding: 15px;
-  background: rgba(0, 0, 0, 0.51);
-  border-radius: 10px;
-  box-shadow: 0 0 5px rgb(255, 255, 255);
-  text-align: left;
+/* === Styling untuk Accordion (Daftar Barang) === */
+.category-title {
+  background-color: #333;
+  color: #fff;
+  padding: 8px;
+  margin-top: 10px;
+  cursor: pointer;
+  border-radius: 5px;
 }
-.updated-item {
-  border-bottom: 1px solid #ddd;
-  padding: 10px 0;
+.category-content {
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
 }
-.updated-item:last-child {
-  border-bottom: none;
+.category-content.hidden {
+  display: none;
 }
-.label {
-  color: #7aeaf7;
-  font-size: 1rem;
+
+/* === Styling Item Row (Daftar Produk) === */
+.item-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 5px;
+  border-radius: 4px;
+}
+.item-no {
+  width: 25px;
+  text-align: right;
+}
+.item-name {
+  flex: 1;
+}
+.item-price {
+  width: 80px;
+  text-align: right;
+}
+.minus-btn,
+.plus-btn {
+  width: 30px;
+  height: 30px;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  background: #28a745;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+}
+.minus-btn:hover,
+.plus-btn:hover {
+  background: #218838;
+}
+.item-qty {
+  width: 30px;
+  text-align: center;
 }
