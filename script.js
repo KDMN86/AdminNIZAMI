@@ -1,7 +1,7 @@
 // ===================== KONFIGURASI =====================
 const ADMIN_PASSWORD = 'admin123'; // (Opsional)
 const scriptURL =
-  'https://script.google.com/macros/s/AKfycbxW5DF6DqaG_6gjRz5ChqaempbSj8KbRqZW8M1ySMiUA9acqvE5fz5MZuLjCWtoLJLi/exec';
+  'https://script.google.com/macros/s/AKfycbzBAk8v5BxFnd40_hVz7urROlVew0JIZB6iQ44wIWcqD1Fcgzi029CviLPTB-ggLFGZ/exec';
 
 // Mapping paket (gunakan sesuai kebutuhan)
 const paketMapping = {
@@ -15,12 +15,11 @@ const paketMapping = {
   'Kids 3000': { nilai: '3000', barang: '130', total: '330' },
   'Kids 2000': { nilai: '2000', barang: '155', total: '330' },
   'Kids 1000': { nilai: '1000', barang: '230', total: '330' },
-  Cookies: { nilai: '1000', barang: '230', total: '330' },
+  Cookies: { nilai: '1000', barang: '330', total: '330' },
   Mingguan: { nilai: '', barang: '0', total: '40' },
 };
 
 // ===================== DAFTAR BARANG UNTUK PAKET MINGGUAN =====================
-// Pastikan data ini sesuai dengan brosur yang Anda miliki
 const barangMingguan = [
   // Kategori Mie
   { category: 'Mie', name: 'Indomie Ayam Bawang', price: 3200 },
@@ -130,7 +129,6 @@ const barangMingguan = [
 ];
 
 // Objek untuk menyimpan pesanan (kuantitas) peserta
-// Format: { "Nama Barang": { quantity, price } }
 let selectedItems = {};
 
 // ===================== FUNGSI LOGIN =====================
@@ -165,6 +163,13 @@ function switchTab(tab) {
   }
 }
 
+// ===================== GET SHEET NAME =====================
+// Fungsi untuk mengambil nama sheet dari dropdown
+function getSheetName() {
+  const sheetSelect = document.getElementById('sheetSelector');
+  return sheetSelect ? sheetSelect.value : 'IBU';
+}
+
 // ===================== UPDATE NILAI & TOTAL =====================
 function updateNilaiTotal() {
   const jenisPaket = document.getElementById('jenisPaket').value;
@@ -174,15 +179,12 @@ function updateNilaiTotal() {
   const barangContainer = document.getElementById('barangContainer');
 
   if (jenisPaket === 'Mingguan') {
-    // Jika paket Mingguan, tampilkan container daftar barang dan generate daftar
     barangContainer.classList.remove('hidden');
     generateBarangList();
-    // Kosongkan input, karena nilai akan dihitung dari pilihan barang
     nilaiSetoranInput.value = '';
     setoranBarangInput.value = '';
     totalSetoranInput.value = '';
   } else {
-    // Sembunyikan container barang untuk paket non-Mingguan
     barangContainer.classList.add('hidden');
     if (paketMapping[jenisPaket]) {
       nilaiSetoranInput.value = paketMapping[jenisPaket].nilai;
@@ -199,12 +201,9 @@ function updateNilaiTotal() {
 // ===================== GENERATE DAFTAR BARANG (ACCORDION + TOMBOL +/-) =====================
 function generateBarangList() {
   const barangListDiv = document.getElementById('barangList');
-  barangListDiv.innerHTML = ''; // Bersihkan isi sebelumnya
-
-  // Reset selectedItems
+  barangListDiv.innerHTML = '';
   selectedItems = {};
 
-  // Kelompokkan barang berdasarkan kategori
   const categories = {};
   barangMingguan.forEach((item) => {
     if (!categories[item.category]) {
@@ -213,60 +212,48 @@ function generateBarangList() {
     categories[item.category].push(item);
   });
 
-  // Buat tampilan per kategori sebagai accordion
   Object.keys(categories).forEach((categoryName) => {
-    // Judul kategori (accordion header)
     const categoryTitle = document.createElement('h5');
     categoryTitle.textContent = categoryName.toUpperCase();
     categoryTitle.className = 'category-title';
-    // Event toggle: klik judul untuk membuka/menutup isi kategori
+    // Klik untuk toggle konten kategori
     categoryTitle.addEventListener('click', () =>
       toggleCategory(categoryContentDiv)
     );
 
-    // Wrapper untuk isi kategori (accordion content)
     const categoryContentDiv = document.createElement('div');
     categoryContentDiv.className = 'category-content hidden';
 
-    // Buat setiap item dalam kategori
     categories[categoryName].forEach((item, idx) => {
       const itemRow = document.createElement('div');
       itemRow.className = 'item-row';
 
-      // Nomor urut
       const itemNo = document.createElement('span');
       itemNo.textContent = idx + 1 + '.';
       itemNo.className = 'item-no';
 
-      // Nama barang
       const itemName = document.createElement('span');
       itemName.textContent = item.name;
       itemName.className = 'item-name';
 
-      // Harga
       const itemPrice = document.createElement('span');
       itemPrice.textContent = `Rp${item.price}`;
       itemPrice.className = 'item-price';
 
-      // Tombol “–”
       const minusBtn = document.createElement('button');
       minusBtn.textContent = '–';
       minusBtn.className = 'minus-btn';
-      // Kurangi kuantitas, kemudian update tampilan kuantitas
       minusBtn.addEventListener('click', () =>
         decreaseItem(item.name, item.price, qtySpan)
       );
 
-      // Tampilan kuantitas (angka)
       const qtySpan = document.createElement('span');
       qtySpan.textContent = '0';
       qtySpan.className = 'item-qty';
 
-      // Tombol “+”
       const plusBtn = document.createElement('button');
       plusBtn.textContent = '+';
       plusBtn.className = 'plus-btn';
-      // Tambah kuantitas, kemudian update tampilan kuantitas
       plusBtn.addEventListener('click', () =>
         increaseItem(item.name, item.price, qtySpan)
       );
@@ -281,18 +268,15 @@ function generateBarangList() {
       categoryContentDiv.appendChild(itemRow);
     });
 
-    // Masukkan judul dan konten kategori ke container utama
     barangListDiv.appendChild(categoryTitle);
     barangListDiv.appendChild(categoryContentDiv);
   });
 }
 
-// ===================== TOGGLE CATEGORY (ACCORDION) =====================
 function toggleCategory(categoryContentDiv) {
   categoryContentDiv.classList.toggle('hidden');
 }
 
-// ===================== TAMBAH/KURANG KUANTITAS =====================
 function increaseItem(name, price, qtySpan) {
   if (!selectedItems[name]) {
     selectedItems[name] = { quantity: 0, price: price };
@@ -313,11 +297,9 @@ function decreaseItem(name, price, qtySpan) {
   updateTotalSetoranBarang();
 }
 
-// ===================== UPDATE TOTAL SETORAN BARANG =====================
 function updateTotalSetoranBarang() {
   let total = 0;
   let selectedNames = [];
-
   for (const itemName in selectedItems) {
     const { quantity, price } = selectedItems[itemName];
     if (quantity > 0) {
@@ -325,26 +307,25 @@ function updateTotalSetoranBarang() {
       selectedNames.push(`${itemName} x${quantity}`);
     }
   }
-
-  // Tampilkan total harga barang yang dipilih
   document.getElementById('totalSetoranBarang').textContent = total;
   document.getElementById('totalSetoran').value = total;
   document.getElementById('setoranBarang').value = selectedNames.join(', ');
 }
 
-// ===================== FILTER PENCARIAN PESERTA =====================
-// (Fungsi-fungsi berikutnya tetap sama, sesuai kode Anda sebelumnya)
+// ===================== CONTOH REQUEST (FILTER, TAMBAH PESERTA, DLL.) =====================
+
 function cariPeserta() {
+  const sheetName = getSheetName();
   const filterType = document.getElementById('filterType').value;
   const filterValue = document.getElementById('filterValue').value.trim();
   if (!filterValue) {
     alert('Masukkan kata kunci pencarian!');
     return;
   }
-
-  fetch(
-    `${scriptURL}?filterType=${filterType}&q=${encodeURIComponent(filterValue)}`
-  )
+  const url = `${scriptURL}?sheetName=${sheetName}&filterType=${filterType}&q=${encodeURIComponent(
+    filterValue
+  )}`;
+  fetch(url)
     .then((res) => res.json())
     .then((data) => {
       const hasilDiv = document.getElementById('hasilPencarian');
@@ -370,11 +351,15 @@ function tampilkanHasilPencarian(data) {
         <p><span class="label">No Urut:</span> ${peserta.no}</p>
         <p><span class="label">ID Peserta:</span> ${peserta.idPeserta}</p>
         <p><span class="label">Nama:</span> ${peserta.nama}</p>
-         <p><span class="label">Paket:</span> ${peserta.jenisPaket}</p>
-        <p><span class="label">Nilai Setoran:</span> ${peserta.nilaiSetoran}</p>
+        <p><span class="label">Paket:</span> ${peserta.jenisPaket}</p>
+        <p><span class="label">Nilai Setoran:</span> Rp ${peserta.nilaiSetoran}</p>
+        <p><span class="label">Setoran Barang:</span> ${peserta.setoranBarang}</p>
+        <p><span class="label">Total Setoran:</span> ${peserta.totalSetoran}x</p>
         <p><span class="label">Grup ID:</span> ${peserta.grupID}</p>
         <p><span class="label">Setoran Masuk:</span> ${peserta.setoranDilakukan}X</p>
         <p><span class="label">Sisa Setoran:</span> ${peserta.sisaSetoran}X</p>
+        
+        
         <input type="number" id="setoran-${peserta.idPeserta}" placeholder="Jumlah Setoran" />
         <button onclick="tambahSetoranPeserta('${peserta.idPeserta}')">Tambah Setoran</button>
       </div>
@@ -392,10 +377,10 @@ function tambahSetoranPeserta(idPeserta) {
     return;
   }
   const formData = new FormData();
+  formData.append('sheetName', getSheetName());
   formData.append('action', 'addSetoran');
   formData.append('idPeserta', idPeserta);
   formData.append('setoranBaru', jumlahSetoran);
-
   fetch(scriptURL, { method: 'POST', body: formData })
     .then((res) => res.json())
     .then((data) => {
@@ -411,6 +396,7 @@ function tambahSetoranPeserta(idPeserta) {
 }
 
 function tambahSetoran() {
+  const sheetName = getSheetName();
   const idPeserta = document.getElementById('idPesertaSetoran').value.trim();
   const setoranBaru = document.getElementById('setoranBaru').value.trim();
   const statusEl = document.getElementById('setoranStatus');
@@ -419,6 +405,7 @@ function tambahSetoran() {
     return;
   }
   const formData = new FormData();
+  formData.append('sheetName', sheetName);
   formData.append('action', 'addSetoran');
   formData.append('idPeserta', idPeserta);
   formData.append('setoranBaru', setoranBaru);
@@ -438,7 +425,8 @@ function tambahSetoran() {
 }
 
 function fetchUpdatedData(idPeserta) {
-  fetch(`${scriptURL}?id=${idPeserta}`)
+  const sheetName = getSheetName();
+  fetch(`${scriptURL}?sheetName=${sheetName}&id=${idPeserta}`)
     .then((r) => r.json())
     .then((data) => {
       if (data.error) {
@@ -461,7 +449,7 @@ function fetchUpdatedData(idPeserta) {
 }
 
 function showUpdatedParticipant(data) {
-  let container = document.getElementById('updatedParticipant');
+  // Siapkan HTML isi data peserta
   let html = `<h3>Data Terbaru Peserta</h3>`;
   data.forEach((peserta) => {
     let pesanBarang = '';
@@ -477,21 +465,37 @@ function showUpdatedParticipant(data) {
         <p><span class="label">ID Peserta:</span> ${peserta.idPeserta}</p>
         <p><span class="label">Nama:</span> ${peserta.nama}</p>
         <p><span class="label">Paket:</span> ${peserta.jenisPaket}</p>
-        <p><span class="label">Nilai Setoran:</span> ${peserta.nilaiSetoran}</p>
+        <p><span class="label">Nilai Setoran:</span> Rp ${peserta.nilaiSetoran}</p>
+        <p><span class="label">Setoran Barang:</span> ${peserta.setoranBarang}</p>
         <p><span class="label">Total Setoran:</span> ${peserta.totalSetoran}X</p>
         <p><span class="label">Setoran Masuk:</span> ${peserta.setoranDilakukan}X</p>
         <p><span class="label">Sisa Setoran:</span> ${peserta.sisaSetoran}X</p>
-        <p><span class="label">Setoran Barang:</span> ${peserta.setoranBarang}X</p>
+        
         ${pesanBarang}
       </div>
     `;
   });
-  container.innerHTML = html;
-  container.classList.remove('hidden');
+
+  // Tampilkan notifikasi mengambang di tengah atas
+  const notif = document.getElementById('floatingStatus');
+  const msg = document.getElementById('statusMessage');
+  msg.innerHTML = '✅ Setoran berhasil ditambahkan.<br>' + html;
+  notif.classList.remove('error');
+  notif.classList.add('success');
+  notif.style.display = 'block';
+
+  // Auto close setelah 5 detik
+  setTimeout(() => {
+    notif.style.display = 'none';
+  }, 50000);
 }
 
-// ===================== TAMBAH PESERTA =====================
+function hideFloatingStatus() {
+  document.getElementById('floatingStatus').style.display = 'none';
+}
+
 function tambahPeserta() {
+  const sheetName = getSheetName();
   const idPeserta = document.getElementById('idPesertaBaru').value.trim();
   const nama = document.getElementById('namaPeserta').value.trim();
   const jenisPaket = document.getElementById('jenisPaket').value;
@@ -506,6 +510,7 @@ function tambahPeserta() {
   }
 
   const formData = new FormData();
+  formData.append('sheetName', sheetName);
   formData.append('action', 'addPeserta');
   formData.append('idPeserta', idPeserta);
   formData.append('nama', nama);
@@ -513,7 +518,6 @@ function tambahPeserta() {
   formData.append('nilaiSetoran', nilaiSetoran);
   formData.append('totalSetoran', totalSetoran);
   formData.append('grupID', grupID);
-  // Sertakan data setoran barang (khusus paket Mingguan)
   formData.append(
     'setoranBarang',
     document.getElementById('setoranBarang').value.trim()
@@ -522,26 +526,66 @@ function tambahPeserta() {
   fetch(scriptURL, { method: 'POST', body: formData })
     .then((res) => res.json())
     .then((data) => {
-      tampilkanStatus(
-        statusEl,
-        data.success || data.error,
-        data.success ? 'success' : 'error'
-      );
+      if (data.success) {
+        // Misal, response berisi data.pesertaDetail
+        tampilkanStatus(null, data.success, 'success', data.pesertaDetail);
+      } else {
+        tampilkanStatus(null, data.error, 'error');
+      }
     })
     .catch(() => {
-      tampilkanStatus(statusEl, 'Gagal menambahkan peserta!', 'error');
+      tampilkanStatus(null, 'Gagal menambahkan peserta!', 'error');
     });
 }
 
-// ===================== TAMPILKAN STATUS =====================
-function tampilkanStatus(element, message, type) {
-  element.textContent = message;
-  element.className = `status ${type}`;
-  element.style.display = 'block';
-  setTimeout(() => (element.style.display = 'none'), 3000);
+function tampilkanStatus(element, message, type, dataPeserta = null) {
+  const notif = document.getElementById('floatingStatus');
+  const statusMessage = document.getElementById('statusMessage');
+
+  // Buat isi pesan dengan pesan utama
+  let html = `<strong>${message}</strong>`;
+
+  // Jika ada data peserta, tampilkan detailnya
+  if (dataPeserta) {
+    html += `
+      <div class="detail-peserta">
+        <p><strong>ID:</strong> ${dataPeserta.idPeserta}</p>
+        <p><strong>Nama:</strong> ${dataPeserta.nama}</p>
+        <p><strong>Paket:</strong> ${dataPeserta.jenisPaket}</p>
+        <p><strong>Setoran Barang:</strong> ${dataPeserta.setoranBarang}</p>
+        <p><strong>Nilai Setoran:</strong> Rp ${dataPeserta.nilaiSetoran}</p>
+        <p><strong>Sisa Setoran:</strong> ${dataPeserta.sisaSetoran}X</p>
+      </div>
+    `;
+  }
+
+  // Masukkan HTML ke elemen notifikasi
+  statusMessage.innerHTML = html;
+
+  // Reset kelas dan tambahkan kelas sesuai tipe
+  notif.className = '';
+  notif.classList.add(type === 'success' ? 'success' : 'error');
+
+  // Tampilkan notifikasi dan trigger animasi slide ke bawah
+  notif.style.display = 'block';
+  notif.classList.add('visible');
+
+  // Auto hide setelah 4 detik
+  setTimeout(() => {
+    hideFloatingStatus();
+  }, 4000);
 }
 
-// ===================== RESET FILTER =====================
+function hideFloatingStatus() {
+  const notif = document.getElementById('floatingStatus');
+  // Hapus kelas "visible" untuk trigger transisi naik
+  notif.classList.remove('visible');
+  // Setelah durasi transisi selesai (misalnya 500ms), sembunyikan notifikasi
+  setTimeout(() => {
+    notif.style.display = 'none';
+  }, 500);
+}
+
 function resetFilter() {
   document.getElementById('filterValue').value = '';
   const hasilDiv = document.getElementById('hasilPencarian');
@@ -552,7 +596,6 @@ function resetFilter() {
   updatedDiv.innerHTML = '';
 }
 
-// ===================== RESET FORM =====================
 function resetForm(type) {
   if (type === 'peserta') {
     document
