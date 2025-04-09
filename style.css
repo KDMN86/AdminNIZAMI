@@ -173,18 +173,22 @@ button:hover {
 
 #floatingStatus {
   position: fixed;
-  top: 20px; /* Posisi tetap di atas layar */
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #073116; /* hijau untuk sukses */
+  background-color: #073116; /* hijau sukses */
   color: white;
   padding: 32px 48px;
   border-radius: 12px;
   z-index: 10000;
   text-align: left;
   font-size: 1rem;
-  max-width: 90%;
   display: none;
+
+  /* Batas lebar untuk desktop/laptop */
+  max-width: 600px;
+  width: auto;
+  box-sizing: border-box;
 }
 
 #floatingStatus.error {
@@ -210,7 +214,19 @@ button:hover {
   margin: 4px 0;
 }
 
-/* Tombol close (×) di pojok kanan atas */
+/* Media query: jika layar <= 480px (smartphone), penuhi hampir seluruh lebar layar */
+@media (max-width: 480px) {
+  #floatingStatus {
+    left: 2.5%;
+    transform: none;
+    width: 95%;
+    padding: 24px 16px; /* agar tidak terlalu lebar padding di HP */
+    max-width: none; /* matikan batas 600px */
+  }
+}
+
+/* Jika Anda tidak menggunakan modal overlay, hapus aturan berikut */
+/* Tombol close di modal lain (jika ada) */
 .notif-modal .close-btn {
   position: absolute;
   top: 15px;
@@ -219,12 +235,10 @@ button:hover {
   cursor: pointer;
   color: #666;
 }
-
-/* Style judul dan detail */
 .notif-modal h3 {
   margin-top: 0;
   margin-bottom: 10px;
-  color: #f00; /* misalnya warna merah, atau sesuaikan */
+  color: #f00;
 }
 .notif-modal .highlight {
   color: #f44336;
@@ -244,6 +258,7 @@ button:hover {
   font-weight: bold;
 }
 
+/* Label */
 .label {
   font-weight: bold;
   color: #7aeaf7;
