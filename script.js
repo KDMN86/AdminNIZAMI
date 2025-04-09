@@ -549,12 +549,12 @@ function tampilkanStatus(element, message, type, dataPeserta = null) {
   if (dataPeserta) {
     html += `
       <div class="detail-peserta">
-        <p><strong>ID:</strong> ${dataPeserta.idPeserta}</p>
-        <p><strong>Nama:</strong> ${dataPeserta.nama}</p>
-        <p><strong>Paket:</strong> ${dataPeserta.jenisPaket}</p>
-        <p><strong>Setoran Barang:</strong> ${dataPeserta.setoranBarang}</p>
-        <p><strong>Nilai Setoran:</strong> Rp ${dataPeserta.nilaiSetoran}</p>
-        <p><strong>Sisa Setoran:</strong> ${dataPeserta.sisaSetoran}X</p>
+        <p><span class="label">ID:</strong> ${dataPeserta.idPeserta}</p>
+        <p><span class="label">Nama:</strong> ${dataPeserta.nama}</p>
+        <p><span class="label">Paket:</strong> ${dataPeserta.jenisPaket}</p>
+        <p><span class="label">Setoran Barang:</strong> ${dataPeserta.setoranBarang}</p>
+        <p><span class="label">Nilai Setoran:</strong> Rp ${dataPeserta.nilaiSetoran}</p>
+        <p><span class="label">Sisa Setoran:</strong> ${dataPeserta.sisaSetoran}X</p>
       </div>
     `;
   }
