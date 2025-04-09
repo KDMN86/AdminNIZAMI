@@ -28,7 +28,7 @@ body {
   border-radius: 16px;
   border: 3px solid rgba(225, 225, 225, 0.1);
   box-shadow: 0px 0px 30px 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
+  /* text-align: left; */
 }
 h2 {
   color: #ffffff;
@@ -176,13 +176,13 @@ button:hover {
   top: 20px; /* Posisi tetap di atas layar */
   left: 50%;
   transform: translateX(-50%);
-  background-color: #4caf50; /* hijau untuk sukses */
+  background-color: #073116; /* hijau untuk sukses */
   color: white;
   padding: 32px 48px;
   border-radius: 12px;
   z-index: 10000;
-  text-align: center;
-  font-size: 24px;
+  text-align: left;
+  font-size: 1rem;
   max-width: 90%;
   display: none;
 }
@@ -242,4 +242,9 @@ button:hover {
 .notif-modal table td:first-child {
   width: 45%;
   font-weight: bold;
+}
+
+.label {
+  font-weight: bold;
+  color: #7aeaf7;
 }
