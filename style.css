@@ -170,3 +170,76 @@ button:hover {
   width: 30px;
   text-align: center;
 }
+
+#floatingStatus {
+  position: fixed;
+  top: 20px; /* Posisi tetap di atas layar */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #4caf50; /* hijau untuk sukses */
+  color: white;
+  padding: 32px 48px;
+  border-radius: 12px;
+  z-index: 10000;
+  text-align: center;
+  font-size: 24px;
+  max-width: 90%;
+  display: none;
+}
+
+#floatingStatus.error {
+  background-color: #f44336;
+}
+
+#floatingStatus .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 32px;
+  cursor: pointer;
+  color: white;
+}
+
+#floatingStatus .detail-peserta {
+  margin-top: 10px;
+  text-align: left;
+  font-size: 16px;
+  line-height: 1.4;
+}
+#floatingStatus .detail-peserta p {
+  margin: 4px 0;
+}
+
+/* Tombol close (×) di pojok kanan atas */
+.notif-modal .close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+}
+
+/* Style judul dan detail */
+.notif-modal h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #f00; /* misalnya warna merah, atau sesuaikan */
+}
+.notif-modal .highlight {
+  color: #f44336;
+  font-weight: bold;
+}
+.notif-modal table {
+  width: 100%;
+  margin-top: 10px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.notif-modal table td {
+  padding: 5px 0;
+}
+.notif-modal table td:first-child {
+  width: 45%;
+  font-weight: bold;
+}
