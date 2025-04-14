@@ -51,9 +51,7 @@
         <input type="text" id="filterValue" placeholder="Masukkan kata kunci" />
         <button onclick="cariPeserta()">Cari Peserta</button>
         <button class="reset-btn" onclick="resetFilter()">Reset</button>
-        <!-- Hasil pencarian peserta -->
         <div id="hasilPencarian" class="updated-container hidden"></div>
-        <!-- Container data peserta terbaru setelah penambahan setoran -->
         <div id="updatedParticipant" class="updated-container hidden"></div>
       </div>
 
@@ -62,7 +60,6 @@
         <h3>Tambah Peserta Baru</h3>
         <input type="text" id="idPesertaBaru" placeholder="ID Peserta" />
         <input type="text" id="namaPeserta" placeholder="Nama" />
-        <!-- Dropdown Jenis Paket -->
         <select id="jenisPaket" onchange="updateNilaiTotal()">
           <option value="" disabled selected>Pilih Jenis Paket</option>
           <option value="Munggah 5000">Munggah 5000</option>
@@ -96,7 +93,6 @@
           placeholder="Total Setoran"
           readonly
         />
-        <!-- Container daftar barang untuk paket Mingguan -->
         <div id="barangContainer" class="hidden">
           <h4>Pilih Barang untuk Setoran</h4>
           <div id="barangList"></div>
@@ -110,30 +106,60 @@
           <p id="successText"></p>
         </div>
       </div>
-    </div>
 
-    <!-- Tambahkan ini setelah form Peserta, sebelum penutup div #adminPanel -->
-    <div style="margin-top: 30px; text-align: center">
-      <button onclick="bukaKalkulatorAdmin()" class="package-button">
-        Kalkulator Admin
-      </button>
+      <!-- Kalkulator Admin -->
+      <div class="form-container" id="kalkulatorAdminContainer">
+        <h3>Kalkulator Admin</h3>
+        <div class="input-group">
+          <input type="text" id="grupInput" placeholder="Masukkan Grup ID" />
+          <button onclick="cariGrup()">Cek Data</button>
+          <button onclick="resetTabel()">Reset</button>
+        </div>
+        <div class="table-container">
+          <table id="resultTable" class="hidden">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Nama</th>
+                <th>Jenis Paket</th>
+                <th>Nilai Setoran (Rp)</th>
+                <th>Jumlah Setoran</th>
+                <th>Subtotal (Rp)</th>
+              </tr>
+            </thead>
+            <tbody id="resultBody"></tbody>
+            <tfoot>
+              <tr>
+                <td colspan="5">Total</td>
+                <td id="grandTotal">Rp 0</td>
+              </tr>
+            </tfoot>
+          </table>
+          <button
+            class="btn-submit hidden"
+            id="submitBtn"
+            onclick="kirimSemuaSetoran()"
+          >
+            Input Semua Setoran
+          </button>
+        </div>
+      </div>
     </div>
 
     <div id="floatingStatus" class="success">
       <span id="statusMessage"></span>
       <span id="notifClose" class="close-btn" onclick="hideFloatingStatus()"
-        >×</span
+        >&times;</span
       >
     </div>
 
-    <!-- Jika overlay/modal tidak dibutuhkan, Anda bisa menghapusnya -->
     <div
       id="notifOverlay"
       class="notif-overlay"
       onclick="hideNotifModal()"
     ></div>
     <div id="notifModal" class="notif-modal">
-      <span class="close-btn" onclick="hideNotifModal()">×</span>
+      <span class="close-btn" onclick="hideNotifModal()">&times;</span>
       <div id="notifContent"></div>
     </div>
 
