@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kalkulator Admin</title>
+    <style>
+      body {
+        font-family: 'Poppins', sans-serif;
+        padding: 20px;
+        background-color: #101010;
+        color: #f0f0f0;
+      }
+      h2 {
+        text-align: center;
+        color: #f0f0f0;
+      }
+      .input-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+      input,
+      button {
+        padding: 10px;
+        font-size: 16px;
+        background-color: #222;
+        color: #f0f0f0;
+        border: 1px solid #444;
+        border-radius: 6px;
+      }
+      button:hover {
+        background-color: #333;
+      }
+      .table-container {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #555;
+        padding: 8px;
+        text-align: center;
+        color: #f0f0f0;
+      }
+      th {
+        background-color: #007bff;
+        color: white;
+      }
+      tfoot td {
+        font-weight: bold;
+        background-color: #333;
+        color: #fff;
+      }
+      .btn-submit {
+        display: block;
+        margin: 20px auto 0;
+        background-color: #28a745;
+        color: white;
+        font-weight: bold;
+      }
+      .btn-submit:hover {
+        background-color: #218838;
+      }
+      .hidden {
+        display: none;
+      }
+      @media screen and (max-width: 600px) {
+        table,
+        thead,
+        tbody,
+        th,
+        td,
+        tr {
+          font-size: 14px;
+        }
+        .input-group {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        input,
+        button {
+          width: 100%;
+        }
+      }
+
+      /* Style khusus untuk dropdown pemilihan sheet */
+      #sheetSelector {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 1rem;
+        border: 1px solid #444;
+        border-radius: 5px;
+        background-color: #222;
+        color: #f0f0f0;
+        margin: 10px 0;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        outline: none;
+      }
+
+      /* Optional: Tambahan style untuk dropdown arrow */
+      #sheetSelector {
+        background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><polygon points='0,4 6,10 12,4' fill='%23f0f0f0'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Kalkulator Admin</h2>
+    <!-- Di dalam container Admin Panel -->
+    <label for="sheetSelector">Pilih Sheet:</label>
+    <select id="sheetSelector">
+      <option value="IBU">IBU</option>
+      <option value="MINGGUAN">MINGGUAN</option>
+      <option value="FUJI">FUJI</option>
+      <option value="SAMSUL">SAMSUL</option>
+      <option value="DELI">DELI</option>
+    </select>
+
+    <div class="input-group">
+      <input type="text" id="grupInput" placeholder="Masukkan Grup ID" />
+      <button onclick="cariGrup()">Cek Data</button>
+      <button onclick="resetTabel()">Reset</button>
+    </div>
+    <div class="table-container">
+      <table id="resultTable" class="hidden">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama</th>
+            <th>Jenis Paket</th>
+            <th>Nilai Setoran (Rp)</th>
+            <th>Jumlah Setoran</th>
+            <th>Subtotal (Rp)</th>
+          </tr>
+        </thead>
+        <tbody id="resultBody"></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="5">Total</td>
+            <td id="grandTotal">Rp 0</td>
+          </tr>
+        </tfoot>
+      </table>
+      <button
+        class="btn-submit hidden"
+        id="submitBtn"
+        onclick="kirimSemuaSetoran()"
+      >
+        Input Semua Setoran
+      </button>
+    </div>
+
+    <script>
+      const API_URL =
+        'https://script.google.com/macros/s/AKfycbzBAk8v5BxFnd40_hVz7urROlVew0JIZB6iQ44wIWcqD1Fcgzi029CviLPTB-ggLFGZ/exec';
+
+      // Fungsi getSheetName: Jika ada dropdown, ambil nilainya; jika tidak, kembalikan default 'IBU'
+      function getSheetName() {
+        const sheetSelect = document.getElementById('sheetSelector');
+        return sheetSelect ? sheetSelect.value : 'IBU';
+      }
+
+      function cariGrup() {
+        const grupID = document.getElementById('grupInput').value.trim();
+        if (!grupID) {
+          alert('Masukkan Grup ID!');
+          return;
+        }
+
+        const table = document.getElementById('resultTable');
+        const tbody = document.getElementById('resultBody');
+        const grandTotal = document.getElementById('grandTotal');
+        const submitBtn = document.getElementById('submitBtn');
+
+        tbody.innerHTML = '<tr><td colspan="6">Loading...</td></tr>';
+        table.classList.remove('hidden');
+        submitBtn.classList.add('hidden');
+
+        fetch(`${API_URL}?group=${grupID}`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.error || data.length === 0) {
+              tbody.innerHTML = `<tr><td colspan="6" style="color:red;">${
+                data.error || 'Data tidak ditemukan'
+              }</td></tr>`;
+              grandTotal.textContent = 'Rp 0';
+              return;
+            }
+
+            let html = '';
+            data.forEach((peserta) => {
+              const nilai = Number(peserta.nilaiSetoran) || 0;
+              // Pastikan baris memiliki attribute data-id untuk ID Peserta
+              html += `
+              <tr data-id="${peserta.idPeserta}">
+                <td>${peserta.no}</td>
+                <td>${peserta.nama}</td>
+                <td>${peserta.jenisPaket}</td>
+                <td>${nilai}</td>
+                <td>
+                  <input type="number" value="0" min="0" style="width: 60px" 
+                    oninput="hitungSubtotal(this, ${nilai})"/>
+                </td>
+                <td class="subtotal">Rp 0</td>
+              </tr>
+            `;
+            });
+            tbody.innerHTML = html;
+            submitBtn.classList.remove('hidden');
+            hitungTotalSemua();
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
+      }
+
+      function hitungSubtotal(input, nilai) {
+        const row = input.closest('tr');
+        const jumlah = Number(input.value) || 0;
+        const subtotal = jumlah * nilai;
+        row.querySelector(
+          '.subtotal'
+        ).textContent = `Rp ${subtotal.toLocaleString()}`;
+        hitungTotalSemua();
+      }
+
+      function hitungTotalSemua() {
+        const subtotalCells = document.querySelectorAll('.subtotal');
+        let total = 0;
+        subtotalCells.forEach((cell) => {
+          const angka = Number(cell.textContent.replace(/[^\d]/g, '')) || 0;
+          total += angka;
+        });
+        document.getElementById(
+          'grandTotal'
+        ).textContent = `Rp ${total.toLocaleString()}`;
+      }
+
+      function resetTabel() {
+        const inputs = document.querySelectorAll('tbody input');
+        inputs.forEach((input) => {
+          input.value = 0;
+          input.dispatchEvent(new Event('input'));
+        });
+      }
+
+      // Fungsi untuk mengirim semua input setoran sekaligus
+      function kirimSemuaSetoran() {
+        // Ambil semua baris dari tbody
+        const rows = document.querySelectorAll('#resultBody tr');
+        const formDataList = [];
+
+        rows.forEach((row) => {
+          const idPeserta = row.getAttribute('data-id');
+          if (!idPeserta) return;
+          const input = row.querySelector('input[type="number"]');
+          if (!input) return;
+          const jumlah = Number(input.value);
+          if (jumlah > 0) {
+            formDataList.push({ idPeserta, jumlah });
+          }
+        });
+
+        if (formDataList.length === 0) {
+          alert('Tidak ada setoran yang diinput!');
+          return;
+        }
+
+        // Gunakan fungsi getSheetName() agar data masuk ke sheet yang dipilih
+        const sheetName = getSheetName();
+
+        const promises = formDataList.map((item) => {
+          const formData = new FormData();
+          formData.append('sheetName', sheetName);
+          formData.append('action', 'addSetoran');
+          formData.append('idPeserta', item.idPeserta);
+          formData.append('setoranBaru', item.jumlah);
+
+          return fetch(API_URL, { method: 'POST', body: formData })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.error) {
+                console.error(`${item.idPeserta}: ${data.error}`);
+                // Lempar error agar Promise.all() menolak (reject)
+                throw new Error(`${item.idPeserta}: ${data.error}`);
+              } else {
+                console.log(`${item.idPeserta}: ${data.success}`);
+              }
+              return data;
+            });
+        });
+
+        Promise.all(promises)
+          .then(() => {
+            alert('Semua setoran berhasil dikirim!');
+          })
+          .catch((err) => {
+            alert(`Terjadi kesalahan: ${err.message}`);
+          });
+      }
+    </script>
+  </body>
+</html>
