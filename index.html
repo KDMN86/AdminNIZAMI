@@ -51,7 +51,9 @@
         <input type="text" id="filterValue" placeholder="Masukkan kata kunci" />
         <button onclick="cariPeserta()">Cari Peserta</button>
         <button class="reset-btn" onclick="resetFilter()">Reset</button>
+        <!-- Hasil pencarian peserta -->
         <div id="hasilPencarian" class="updated-container hidden"></div>
+        <!-- Container data peserta terbaru setelah penambahan setoran -->
         <div id="updatedParticipant" class="updated-container hidden"></div>
       </div>
 
@@ -93,6 +95,7 @@
           placeholder="Total Setoran"
           readonly
         />
+        <!-- Container daftar barang untuk paket Mingguan -->
         <div id="barangContainer" class="hidden">
           <h4>Pilih Barang untuk Setoran</h4>
           <div id="barangList"></div>
@@ -108,15 +111,20 @@
       </div>
 
       <!-- Kalkulator Admin -->
-      <div class="form-container" id="kalkulatorAdminContainer">
+      <!-- Tambahkan kelas "hidden" agar kontainer ini tersembunyi secara default -->
+      <div class="form-container hidden" id="kalkulatorAdminContainer">
         <h3>Kalkulator Admin</h3>
         <div class="input-group">
-          <input type="text" id="grupInput" placeholder="Masukkan Grup ID" />
-          <button onclick="cariGrup()">Cek Data</button>
-          <button onclick="resetTabel()">Reset</button>
+          <input
+            type="text"
+            id="calcGrupInput"
+            placeholder="Masukkan Grup ID"
+          />
+          <button onclick="cariGrupCalc()">Cek Data</button>
+          <button onclick="resetTabelCalc()">Reset</button>
         </div>
         <div class="table-container">
-          <table id="resultTable" class="hidden">
+          <table id="calcResultTable" class="hidden">
             <thead>
               <tr>
                 <th>No</th>
@@ -127,22 +135,29 @@
                 <th>Subtotal (Rp)</th>
               </tr>
             </thead>
-            <tbody id="resultBody"></tbody>
+            <tbody id="calcResultBody"></tbody>
             <tfoot>
               <tr>
                 <td colspan="5">Total</td>
-                <td id="grandTotal">Rp 0</td>
+                <td id="calcGrandTotal">Rp 0</td>
               </tr>
             </tfoot>
           </table>
           <button
             class="btn-submit hidden"
-            id="submitBtn"
-            onclick="kirimSemuaSetoran()"
+            id="calcSubmitBtn"
+            onclick="kirimSemuaSetoranCalc()"
           >
             Input Semua Setoran
           </button>
         </div>
+      </div>
+
+      <!-- Tombol Navigasi Kalkulator Admin -->
+      <div style="margin-top: 30px; text-align: center">
+        <button onclick="bukaKalkulatorAdmin()" class="package-button">
+          Kalkulator Admin
+        </button>
       </div>
     </div>
 
@@ -164,5 +179,18 @@
     </div>
 
     <script src="script.js"></script>
+    <script>
+      // Fungsi untuk menampilkan kalkulator admin
+      function bukaKalkulatorAdmin() {
+        // Sembunyikan form setoran dan peserta
+        window.location.href = 'kalkulator-admin.html';
+        document.getElementById('formSetoran').classList.remove('active');
+        document.getElementById('formPeserta').classList.remove('active');
+        // Tampilkan kalkulator admin dengan menghapus kelas "hidden"
+        document
+          .getElementById('kalkulatorAdminContainer')
+          .classList.remove('hidden');
+      }
+    </script>
   </body>
 </html>
