@@ -113,6 +113,24 @@
         background-position: right 10px center;
         background-size: 12px;
       }
+
+      .btn-submit {
+        display: block;
+        margin: 20px auto;
+        background-color: #28a745;
+        color: white;
+        font-weight: bold;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+      }
+      .btn-submit:hover {
+        background-color: #218838;
+      }
+
+      .table-container {
+        overflow-x: auto;
+      }
     </style>
   </head>
   <body>
@@ -183,7 +201,20 @@
         const grandTotal = document.getElementById('grandTotal');
         const submitBtn = document.getElementById('submitBtn');
 
-        tbody.innerHTML = '<tr><td colspan="6">Loading...</td></tr>';
+        // Update header tabel agar mencakup kolom "Setoran Masuk"
+        table.querySelector('thead').innerHTML = `
+    <tr>
+      <th>No</th>
+      <th>Nama</th>
+      <th>Jenis Paket</th>
+      <th>Nilai Setoran (Rp)</th>
+      <th>Setoran Sebelumnya</th>
+      <th>Jumlah Setoran</th>
+      <th>Subtotal (Rp)</th>
+    </tr>
+  `;
+
+        tbody.innerHTML = '<tr><td colspan="7">Loading...</td></tr>';
         table.classList.remove('hidden');
         submitBtn.classList.add('hidden');
 
@@ -191,7 +222,7 @@
           .then((res) => res.json())
           .then((data) => {
             if (data.error || data.length === 0) {
-              tbody.innerHTML = `<tr><td colspan="6" style="color:red;">${
+              tbody.innerHTML = `<tr><td colspan="7" style="color:red;">${
                 data.error || 'Data tidak ditemukan'
               }</td></tr>`;
               grandTotal.textContent = 'Rp 0';
@@ -201,20 +232,22 @@
             let html = '';
             data.forEach((peserta) => {
               const nilai = Number(peserta.nilaiSetoran) || 0;
-              // Pastikan baris memiliki attribute data-id untuk ID Peserta
+              // Munculkan nilai setoran yang sudah dilakukan (kolom G)
+              const setoranMasuk = Number(peserta.setoranDilakukan) || 0;
               html += `
-              <tr data-id="${peserta.idPeserta}">
-                <td>${peserta.no}</td>
-                <td>${peserta.nama}</td>
-                <td>${peserta.jenisPaket}</td>
-                <td>${nilai}</td>
-                <td>
-                  <input type="number" value="0" min="0" style="width: 60px" 
-                    oninput="hitungSubtotal(this, ${nilai})"/>
-                </td>
-                <td class="subtotal">Rp 0</td>
-              </tr>
-            `;
+          <tr data-id="${peserta.idPeserta}">
+            <td>${peserta.no}</td>
+            <td>${peserta.nama}</td>
+            <td>${peserta.jenisPaket}</td>
+            <td>${nilai}</td>
+            <td>${setoranMasuk}</td>
+            <td>
+              <input type="number" value="0" min="0" style="width: 60px"
+                oninput="hitungSubtotal(this, ${nilai})"/>
+            </td>
+            <td class="subtotal">Rp 0</td>
+          </tr>
+        `;
             });
             tbody.innerHTML = html;
             submitBtn.classList.remove('hidden');
