@@ -346,25 +346,55 @@ function cariPeserta() {
 function tampilkanHasilPencarian(data) {
   let html = `<h3>Hasil Pencarian</h3>`;
   data.forEach((peserta) => {
+    let detailMingguanHTML = '';
+    if (
+      peserta.jenisPaket &&
+      peserta.jenisPaket.toLowerCase() === 'mingguan' &&
+      peserta.setoranBarang &&
+      peserta.setoranBarang.trim() !== ''
+    ) {
+      const itemStrings = peserta.setoranBarang.split(',');
+      let totalRincian = 0;
+      detailMingguanHTML += `<div class="detail-peserta"><p><strong>Rincian Harga per Item:</strong></p>`;
+      itemStrings.forEach((itemStr, idx) => {
+        const parts = itemStr.trim().split('x');
+        if (parts.length === 2) {
+          const itemName = parts[0].trim();
+          const quantity = Number(parts[1].trim());
+          const barang = barangMingguan.find(
+            (b) => b.name.toLowerCase() === itemName.toLowerCase()
+          );
+          if (barang && !isNaN(quantity)) {
+            const subTotal = barang.price * quantity;
+            totalRincian += subTotal;
+            detailMingguanHTML += `<p>${
+              idx + 1
+            }. ${itemName} x${quantity} = Rp ${subTotal.toLocaleString()}</p>`;
+          }
+        }
+      });
+      detailMingguanHTML += `<p><strong>Total Rincian:</strong> Rp ${totalRincian.toLocaleString()}</p></div>`;
+    }
+
     html += `
       <div class="updated-item">
         <p><span class="label">No Urut:</span> ${peserta.no}</p>
         <p><span class="label">ID Peserta:</span> ${peserta.idPeserta}</p>
+        <p><span class="label">Grup ID:</span> ${peserta.grupID}</p>
         <p><span class="label">Nama:</span> ${peserta.nama}</p>
         <p><span class="label">Paket:</span> ${peserta.jenisPaket}</p>
         <p><span class="label">Nilai Setoran:</span> Rp ${peserta.nilaiSetoran}</p>
-        <p><span class="label">Setoran Barang:</span> ${peserta.setoranBarang}</p>
+        ${detailMingguanHTML}
         <p><span class="label">Total Setoran:</span> ${peserta.totalSetoran}x</p>
-        <p><span class="label">Grup ID:</span> ${peserta.grupID}</p>
+        
         <p><span class="label">Setoran Masuk:</span> ${peserta.setoranDilakukan}X</p>
         <p><span class="label">Sisa Setoran:</span> ${peserta.sisaSetoran}X</p>
-        
-        
         <input type="number" id="setoran-${peserta.idPeserta}" placeholder="Jumlah Setoran" />
         <button onclick="tambahSetoranPeserta('${peserta.idPeserta}')">Tambah Setoran</button>
       </div>
     `;
   });
+
   document.getElementById('hasilPencarian').innerHTML = html;
 }
 
@@ -611,4 +641,8 @@ function resetForm(type) {
     document.getElementById('updatedParticipant').classList.add('hidden');
     document.getElementById('updatedParticipant').innerHTML = '';
   }
+}
+
+function bukaKalkulatorAdmin() {
+  window.location.href = 'kalkulator-admin.html';
 }
