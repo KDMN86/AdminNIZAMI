@@ -1,5 +1,42 @@
-// ===================== KONFIGURASI =====================
-const ADMIN_PASSWORD = 'admin123'; // (Opsional)
+const ADMIN_PASSWORD = 'admin123';
+const SESSION_KEY = 'adminAuthTime';
+function initAuth() {
+  const t = localStorage.getItem(SESSION_KEY);
+  if (t && Date.now() - +t < 10 * 60 * 1000) {
+    loginSuccess();
+    return true;
+  }
+  return false;
+}
+function loginSuccess() {
+  document.getElementById('loginContainer').classList.add('hidden');
+  document.getElementById('adminPanel').classList.remove('hidden');
+  document.getElementById('loginError').classList.add('hidden');
+}
+function login() {
+  const pw = document.getElementById('adminPassword').value.trim();
+  if (pw === ADMIN_PASSWORD) {
+    localStorage.setItem(SESSION_KEY, Date.now());
+    loginSuccess();
+  } else {
+    document.getElementById('loginError').classList.remove('hidden');
+  }
+}
+document.getElementById('btnLogin').addEventListener('click', login);
+window.addEventListener('DOMContentLoaded', () => {
+  if (!initAuth()) {
+    document.getElementById('loginContainer').classList.remove('hidden');
+    document.getElementById('adminPanel').classList.add('hidden');
+  }
+});
+
+// ————— Tab logic —————
+function switchTab(tab) {
+  // hanya peserta yang inline di halaman ini
+  document.getElementById('formPeserta').classList.add('active');
+  document.getElementById('pesertaTabBtn').classList.add('active');
+}
+
 const scriptURL =
   'https://script.google.com/macros/s/AKfycbzBAk8v5BxFnd40_hVz7urROlVew0JIZB6iQ44wIWcqD1Fcgzi029CviLPTB-ggLFGZ/exec';
 
@@ -532,10 +569,9 @@ function tambahPeserta() {
   const nilaiSetoran = document.getElementById('nilaiSetoran').value.trim();
   const totalSetoran = document.getElementById('totalSetoran').value.trim();
   const grupID = document.getElementById('grupID').value.trim();
-  const statusEl = document.getElementById('pesertaStatus');
 
   if (!idPeserta || !nama || !jenisPaket || !totalSetoran || !grupID) {
-    tampilkanStatus(statusEl, 'Semua field harus diisi!', 'error');
+    tampilkanStatus(null, 'Semua field harus diisi!', 'error');
     return;
   }
 
@@ -557,8 +593,8 @@ function tambahPeserta() {
     .then((res) => res.json())
     .then((data) => {
       if (data.success) {
-        // Misal, response berisi data.pesertaDetail
-        tampilkanStatus(null, data.success, 'success', data.pesertaDetail);
+        alert('✅ ' + data.success);
+        resetForm();
       } else {
         tampilkanStatus(null, data.error, 'error');
       }
@@ -566,54 +602,6 @@ function tambahPeserta() {
     .catch(() => {
       tampilkanStatus(null, 'Gagal menambahkan peserta!', 'error');
     });
-}
-
-function tampilkanStatus(element, message, type, dataPeserta = null) {
-  const notif = document.getElementById('floatingStatus');
-  const statusMessage = document.getElementById('statusMessage');
-
-  // Buat isi pesan dengan pesan utama
-  let html = `<strong>${message}</strong>`;
-
-  // Jika ada data peserta, tampilkan detailnya
-  if (dataPeserta) {
-    html += `
-      <div class="detail-peserta">
-        <p><span class="label">ID:</strong> ${dataPeserta.idPeserta}</p>
-        <p><span class="label">Nama:</strong> ${dataPeserta.nama}</p>
-        <p><span class="label">Paket:</strong> ${dataPeserta.jenisPaket}</p>
-        <p><span class="label">Setoran Barang:</strong> ${dataPeserta.setoranBarang}</p>
-        <p><span class="label">Nilai Setoran:</strong> Rp ${dataPeserta.nilaiSetoran}</p>
-        <p><span class="label">Sisa Setoran:</strong> ${dataPeserta.sisaSetoran}X</p>
-      </div>
-    `;
-  }
-
-  // Masukkan HTML ke elemen notifikasi
-  statusMessage.innerHTML = html;
-
-  // Reset kelas dan tambahkan kelas sesuai tipe
-  notif.className = '';
-  notif.classList.add(type === 'success' ? 'success' : 'error');
-
-  // Tampilkan notifikasi dan trigger animasi slide ke bawah
-  notif.style.display = 'block';
-  notif.classList.add('visible');
-
-  // Auto hide setelah 4 detik
-  setTimeout(() => {
-    hideFloatingStatus();
-  }, 4000);
-}
-
-function hideFloatingStatus() {
-  const notif = document.getElementById('floatingStatus');
-  // Hapus kelas "visible" untuk trigger transisi naik
-  notif.classList.remove('visible');
-  // Setelah durasi transisi selesai (misalnya 500ms), sembunyikan notifikasi
-  setTimeout(() => {
-    notif.style.display = 'none';
-  }, 500);
 }
 
 function resetFilter() {
