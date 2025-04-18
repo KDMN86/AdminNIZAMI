@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kalender Setoran Peserta</title>
+    <style>
+      /* Reset & Font */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f2f2f2;
+        color: #333;
+        padding: 16px;
+        line-height: 1.5;
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 16px;
+        font-size: 1.8rem;
+        color: #073116;
+      }
+
+      /* Peserta Info */
+      .info {
+        background: #fff;
+        max-width: 480px;
+        margin: 0 auto 16px;
+        padding: 12px 16px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        font-size: 1rem;
+      }
+
+      /* Tombol Kembali */
+      .btn-kembali {
+        display: inline-block;
+        margin: 0 auto 24px;
+        padding: 10px 20px;
+        background-color: #073116;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: background-color 0.2s;
+      }
+      .btn-kembali:hover {
+        background-color: #05502e;
+      }
+
+      /* Bungkus kalender agar bisa scroll horizontal di mobile */
+      .table-responsive {
+        overflow-x: auto;
+        margin-bottom: 32px;
+      }
+
+      /* Kalender per bulan sebagai kartu */
+      .bulan {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 16px;
+        margin-bottom: 24px;
+      }
+      .judul-bulan {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #073116;
+        text-align: center;
+        margin-bottom: 12px;
+      }
+
+      /* Table styling */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      th,
+      td {
+        width: 14.285%; /* 100/7 */
+        padding: 8px 0;
+        text-align: center;
+        border: 1px solid #ddd;
+      }
+      th {
+        background-color: #e6e6e6;
+        color: #333;
+        font-weight: 500;
+      }
+      td {
+        background-color: #fafafa;
+      }
+      td.hijau {
+        background-color: #28a745;
+        color: #fff;
+        font-weight: bold;
+      }
+
+      /* Media query untuk layar kecil */
+      @media (max-width: 600px) {
+        body {
+          padding: 8px;
+        }
+        h1 {
+          font-size: 1.5rem;
+        }
+        .info {
+          padding: 10px;
+          font-size: 0.9rem;
+        }
+        .btn-kembali {
+          width: 100%;
+          margin-bottom: 16px;
+        }
+        .judul-bulan {
+          font-size: 1.1rem;
+        }
+        table {
+          font-size: 0.8rem;
+        }
+        th,
+        td {
+          padding: 6px 0;
+          height: 32px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Kalender Setoran Peserta</h1>
+    <div class="info" id="pesertaInfo"></div>
+    <div id="kalender-container"></div>
+
+    <script>
+      // --- Baca semua param dari URL ---
+      const params = new URLSearchParams(window.location.search);
+      const idPeserta = params.get('id') || '';
+      const namaPeserta = params.get('nama') || '';
+      const grupID = params.get('grupID') || '';
+      const jumlahSetoran = Number(params.get('jumlah')) || 0;
+      const paket = params.get('paket') || '';
+      const paketLower = paket.toLowerCase();
+
+      // --- Tampilkan Info Peserta + Tombol Kembali ---
+      let infoHTML = '';
+      if (idPeserta)
+        infoHTML += `<p><strong>ID Peserta:</strong> ${idPeserta}</p>`;
+      if (namaPeserta)
+        infoHTML += `<p><strong>Nama:</strong> ${namaPeserta}</p>`;
+
+      if (paket) infoHTML += `<p><strong>Paket:</strong> ${paket}</p>`;
+      infoHTML += `
+        <button class="btn-kembali" onclick="history.back()">
+          ← Kembali ke Hasil Pencarian
+        </button>`;
+      document.getElementById('pesertaInfo').innerHTML = infoHTML;
+
+      // --- Hitung total hari sesuai paket ---
+      const hariTotal = ['mingguan', 'munggah 5000', 'munggah hemat'].includes(
+        paketLower
+      )
+        ? 300
+        : 330;
+
+      // --- Siapkan kalender mulai 11 April 2025 ---
+      const tanggalMulai = new Date('2025-04-11');
+      let hariKe = 0;
+      let currentDate = new Date(tanggalMulai);
+      const container = document.getElementById('kalender-container');
+
+      // --- Generate satu per satu bulan sampai hariTotal ---
+      while (hariKe < hariTotal) {
+        const bulan = currentDate.getMonth();
+        const tahun = currentDate.getFullYear();
+        const namaBulan = [
+          'Januari',
+          'Februari',
+          'Maret',
+          'April',
+          'Mei',
+          'Juni',
+          'Juli',
+          'Agustus',
+          'September',
+          'Oktober',
+          'November',
+          'Desember',
+        ][bulan];
+
+        // Wrapper bulan
+        const divBulan = document.createElement('div');
+        divBulan.className = 'bulan';
+        // Judul
+        const judul = document.createElement('div');
+        judul.className = 'judul-bulan';
+        judul.textContent = `${namaBulan} ${tahun}`;
+        divBulan.appendChild(judul);
+
+        // Tabel & header
+        const tabel = document.createElement('table');
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+        ['Mg', 'Sn', 'Sl', 'Rb', 'Km', 'Jm', 'Sb'].forEach((h) => {
+          const th = document.createElement('th');
+          th.textContent = h;
+          headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+        tabel.appendChild(thead);
+
+        // Body
+        const tbody = document.createElement('tbody');
+        let row = document.createElement('tr');
+
+        // Offset baris pertama
+        const firstOfMonth = new Date(tahun, bulan, 1);
+        const offset =
+          firstOfMonth.getFullYear() === tanggalMulai.getFullYear() &&
+          firstOfMonth.getMonth() === tanggalMulai.getMonth()
+            ? tanggalMulai.getDay()
+            : firstOfMonth.getDay();
+        for (let i = 0; i < offset; i++) {
+          row.appendChild(document.createElement('td'));
+        }
+
+        // Isi hari
+        while (currentDate.getMonth() === bulan && hariKe < hariTotal) {
+          const td = document.createElement('td');
+          td.textContent = currentDate.getDate();
+          if (hariKe < jumlahSetoran) {
+            td.classList.add('hijau');
+          }
+          row.appendChild(td);
+
+          // Jika penuh 7 kolom, push & reset
+          if (row.children.length === 7) {
+            tbody.appendChild(row);
+            row = document.createElement('tr');
+          }
+
+          // Lanjut hari berikutnya
+          currentDate.setDate(currentDate.getDate() + 1);
+          hariKe++;
+        }
+
+        // Isi sel kosong di akhir baris
+        while (row.children.length && row.children.length < 7) {
+          row.appendChild(document.createElement('td'));
+        }
+        tbody.appendChild(row);
+
+        tabel.appendChild(tbody);
+        divBulan.appendChild(tabel);
+        container.appendChild(divBulan);
+      }
+    </script>
+  </body>
+</html>

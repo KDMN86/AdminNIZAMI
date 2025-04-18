@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cek Status Peserta</title>
+    <link rel="stylesheet" href="styles2.css" />
+    <style>
+      .result-item {
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+      .result-item p {
+        margin: 6px 0;
+      }
+      .label {
+        font-weight: bold;
+      }
+      .hidden {
+        display: none;
+      }
+      .btn-kalender {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 10px 20px;
+        background-color: #073116;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+      .btn-kalender:hover {
+        background-color: #05502e;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Cek Status Peserta</h2>
+      <select id="filterType">
+        <option value="id">Cek berdasarkan ID Peserta</option>
+        <option value="group">Cek berdasarkan Grup ID</option>
+      </select>
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Masukkan ID Peserta atau Grup ID"
+      />
+      <button onclick="cekStatus()">Cek Status</button>
+      <button class="btn-reset" onclick="resetForm()">Reset</button>
+      <div id="resultContainer" class="result hidden"></div>
+    </div>
+
+    <script>
+      const API_URL =
+        'https://script.google.com/macros/s/AKfycbzBAk8v5BxFnd40_hVz7urROlVew0JIZB6iQ44wIWcqD1Fcgzi029CviLPTB-ggLFGZ/exec';
+
+      const barangMingguan = [
+        // Kategori Mie
+        { name: 'Indomie Ayam Bawang', price: 3200 },
+        { name: 'Indomie Soto', price: 3200 },
+        { name: 'Indomie Goreng Bawang', price: 3500 },
+        { name: 'Indomie Goreng Rendang', price: 3500 },
+        { name: 'Indomie Goreng Rica-rica', price: 3500 },
+        { name: 'Indomie Goreng Aceh', price: 3500 },
+        { name: 'Indomie Goreng Cabe Ijo', price: 3500 },
+        { name: 'Indomie Goreng Ayam Geprek', price: 3500 },
+        { name: 'Indomie Goreng Ayam Pop', price: 3500 },
+        { name: 'Indomie Empal Gentong', price: 3500 },
+        { name: 'Indomie Kocok Bandung', price: 3500 },
+        { name: 'Mie Sedap Goreng', price: 3500 },
+        { name: 'Mie Sedap Bawang', price: 3500 },
+        { name: 'Mie Sedaap Baked Soto', price: 3500 },
+        { name: 'Mie Sedaap Baked Goreng', price: 3500 },
+        { name: 'Mie Sedaap Ayam Jerit', price: 3000 },
+        { name: 'Mie Sedaap Korean Spicy', price: 3000 },
+        { name: 'Mie Sedaap Kare Kental', price: 3000 },
+        { name: 'Mie Sedap Ayam Bawang', price: 3000 },
+        { name: 'Mie Sedap Soto', price: 3000 },
+        { name: 'Mie Sukses Goreng Rendang', price: 4000 },
+        { name: 'Mie Sukses Ayam Bawang Kuah', price: 4000 },
+        { name: 'Mie Sukses Goreng Kecap', price: 4000 },
+        { name: 'Mie Sukses Goreng Kriuk', price: 4000 },
+        { name: 'Mie Oven Goreng', price: 3000 },
+        { name: 'Mie Oven Kuah', price: 3000 },
+        { name: 'Pop Mie Ayam Besar', price: 3200 },
+        { name: 'Pop Mie Bakso Besar', price: 3200 },
+        { name: 'Pop Mie Gledek', price: 3500 },
+        { name: 'Pop Mie Goreng', price: 3500 },
+        { name: 'Pop Mie Ayam Kecil', price: 2500 },
+        { name: 'Pop Mie Bakso Kecil', price: 2500 },
+
+        // Kategori Sembako
+        { name: 'Beras Super 25 kg', price: 10000 },
+        { name: 'Beras Super 10 kg', price: 5000 },
+        {
+          name: 'Minyak Goreng Bimoli 5L (Kompan)',
+          price: 3750,
+        },
+        { name: 'Minyak Goreng kemasan 2L  1 pc', price: 1500 },
+        {
+          name: 'Minyak Goreng Kemasan 2L (1 Karton)',
+          price: 7500,
+        },
+        { name: 'Kecap Bango 550 ml', price: 800 },
+        { name: 'Kecap ABC 520 ml', price: 750 },
+        { name: 'Kecap Sedap 600 ml', price: 700 },
+        { name: 'Royco Ayam 230 gr', price: 400 },
+        { name: 'Royco Sapi 230 gr', price: 400 },
+        { name: 'Totole kaldu jamur 200 gr', price: 750 },
+        { name: 'VetSin Sasa 250 gr', price: 500 },
+        { name: 'Gula Pasir 1 kg', price: 600 },
+        { name: 'Gula Kawung 1 kg', price: 900 },
+        { name: 'Kerupuk Udang MP 1 kg', price: 1200 },
+        { name: 'Kerupuk Udang 1 Karton', price: 5000 },
+        { name: 'Emping 1 kg', price: 3000 },
+        { name: 'Ranginang 1 kg', price: 1500 },
+        { name: 'Kerupuk Kemplang 1 ball', price: 1900 },
+        { name: 'Kerupuk Kemplang 1 Kg', price: 600 },
+        { name: 'Kacang kupas 1 kg', price: 1250 },
+        { name: 'Kacang kupas 500 gr', price: 625 },
+        { name: 'Terigu Segitiga Biru 1 kg', price: 450 },
+        { name: 'Terigu Kunci Biru 1 kg', price: 450 },
+        { name: 'Terigu Cakra Kembar 1 kg', price: 550 },
+        { name: 'Mentega Blueband 200 gr', price: 400 },
+        { name: 'Mentega Palmia 200 gr', price: 300 },
+
+        // Kategori Daging
+        { name: 'Daging Super 1 kg', price: 4000 },
+        { name: 'Tulang Iga Gondrong 1 kg', price: 3250 },
+        { name: 'Daging Iga 1 kg', price: 4000 },
+        { name: 'Cokor Sapi 1 kg', price: 5000 },
+        { name: 'Paha Sapi 1 kg', price: 3750 },
+        { name: 'Kepala Sapi 1 kg', price: 2750 },
+        { name: 'Daging Ayam 1 kg', price: 1250 },
+
+        // Kategori Kue Kaleng
+        { name: 'Kue Monde Besar', price: 4600 },
+        { name: 'Kue Monde Kecil', price: 2300 },
+        { name: 'Kue Monde Eggroll Besar', price: 3000 },
+        { name: 'Kue Monde Eggroll Kecil', price: 2200 },
+        { name: 'Kue Khongguan Besar', price: 3250 },
+        { name: 'Kue Khongguan Kecil', price: 2200 },
+        { name: 'Kue Wafer Tango Coklat', price: 1750 },
+        { name: 'Kue Wafer Tango Vanila', price: 1750 },
+        { name: 'Kue Wafer Nissin', price: 2000 },
+        { name: 'Kue Astor Kaleng Kecil', price: 1000 },
+        { name: 'Kue Astor Aladin Blek', price: 6250 },
+        { name: 'Kue Wafer Aladin Blek', price: 6000 },
+
+        // Kategori Minuman
+        { name: 'SKM Frisian Flag pouch 545 ml', price: 625 },
+        { name: 'Susu Frisian Flag 1 L', price: 600 },
+        { name: 'Pocari Sweet 2 L', price: 650 },
+        { name: 'ABC Squash deligh 1 botol', price: 400 },
+        { name: 'ABC Special Gread 1 botol', price: 650 },
+        { name: 'Marjan Boudoin', price: 650 },
+        { name: 'Fanta 1,5L', price: 500 },
+        { name: 'Coca cola 1,5 L', price: 500 },
+        { name: 'Sprite 1,5L', price: 500 },
+        { name: 'Teh Pucuk 1 L', price: 400 },
+      ];
+
+      // Jika URL punya ?group=… otomatis trigger cekStatus()
+      window.onload = () => {
+        const p = new URLSearchParams(location.search),
+          g = p.get('group');
+        if (g) {
+          document.getElementById('filterType').value = 'group';
+          document.getElementById('searchInput').value = g;
+          cekStatus();
+        }
+      };
+
+      function cekStatus() {
+        const ft = document.getElementById('filterType').value,
+          q = document.getElementById('searchInput').value.trim();
+        if (!q) return alert('Masukkan kata kunci!');
+        const param =
+            ft === 'id'
+              ? `?id=${encodeURIComponent(q)}`
+              : `?group=${encodeURIComponent(q)}`,
+          out = document.getElementById('resultContainer');
+        out.innerHTML = 'Loading…';
+        out.classList.remove('hidden');
+
+        fetch(API_URL + param)
+          .then((r) => r.json())
+          .then((data) => {
+            if (data.error)
+              out.innerHTML = `<p style="color:red">${data.error}</p>`;
+            else tampilkanHasil(data);
+          })
+          .catch(
+            (err) =>
+              (out.innerHTML = `<p style="color:red">Error: ${err.message}</p>`)
+          );
+      }
+
+      function tampilkanHasil(data) {
+        let html = `<h3>Hasil Pencarian</h3>`;
+
+        data.forEach((peserta) => {
+          // 1) Pesan hijau jika setoran barang terpenuhi
+          let pesanBarang = '';
+          if (
+            peserta.setoranBarang &&
+            Number(peserta.setoranDilakukan) >= Number(peserta.setoranBarang)
+          ) {
+            pesanBarang = `
+        <p style="color:green;font-weight:bold;">
+          Selamat, Anda telah mencapai simpanan barang! 
+          Setoran selanjutnya akan menambah ke tabungan uang Anda.
+        </p>`;
+          }
+
+          // 2) Rincian harga untuk paket Mingguan
+          let rincianBarangHTML = '';
+          if (
+            peserta.jenisPaket &&
+            peserta.jenisPaket.toLowerCase() === 'mingguan' &&
+            peserta.setoranBarang
+          ) {
+            const items = peserta.setoranBarang.split(',');
+            let totalRincian = 0;
+            rincianBarangHTML = `
+        <div style="margin-top:10px;">
+          <strong>Rincian Harga Barang:</strong><br/>`;
+            items.forEach((itemStr, idx) => {
+              const [nama, qtyStr] = itemStr.split('x').map((s) => s.trim());
+              const jumlah = Number(qtyStr);
+              const barang = barangMingguan.find(
+                (b) => b.name.toLowerCase() === nama.toLowerCase()
+              );
+              if (barang && !isNaN(jumlah)) {
+                const subtotal = barang.price * jumlah;
+                totalRincian += subtotal;
+                rincianBarangHTML += `
+            ${
+              idx + 1
+            }. ${nama} x${jumlah} = Rp ${subtotal.toLocaleString()}<br/>`;
+              }
+            });
+            rincianBarangHTML += `
+          <strong>Total Barang:</strong> Rp ${totalRincian.toLocaleString()}
+        </div>`;
+          }
+
+          // 3) Tombol “Lihat Kalender” hanya untuk paket non‑Mingguan
+          let tombolKalender = '';
+          if (
+            peserta.jenisPaket &&
+            peserta.jenisPaket.toLowerCase() !== 'mingguan'
+          ) {
+            const jumlah = encodeURIComponent(peserta.setoranDilakukan);
+            const paket = encodeURIComponent(peserta.jenisPaket);
+            const id = encodeURIComponent(peserta.idPeserta);
+            const nama = encodeURIComponent(peserta.nama);
+            const grup = encodeURIComponent(peserta.grupID || '');
+
+            tombolKalender = `
+    <button
+      class="btn-kalender"
+      onclick="window.location.href=
+        'kalender.html?jumlah=${jumlah}&paket=${paket}&id=${id}&nama=${nama}&grupID=${grup}'">
+      Lihat Kalender Setoran
+    </button>`;
+          }
+
+          // 4) Bangun HTML kartu peserta
+          html += `
+      <div class="result-item">
+        <p><span class="label">No:</span> ${peserta.no}</p>
+        <p><span class="label">ID Peserta:</span> ${peserta.idPeserta}</p>
+        <p><span class="label">Nama:</span> ${peserta.nama}</p>
+        <p><span class="label">Paket:</span> ${peserta.jenisPaket}</p>
+        <p><span class="label">Nilai Setoran:</span> Rp ${peserta.nilaiSetoran}</p>
+        ${rincianBarangHTML}
+        <p><span class="label">Total Setoran:</span> ${peserta.totalSetoran}X</p>
+        <p><span class="label">Setoran Masuk:</span> ${peserta.setoranDilakukan}X</p>
+        <p><span class="label">Sisa Setoran:</span> ${peserta.sisaSetoran}X</p>
+        ${pesanBarang}
+        ${tombolKalender}
+      </div>`;
+        });
+
+        document.getElementById('resultContainer').innerHTML = html;
+      }
+
+      function resetForm() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('resultContainer').classList.add('hidden');
+      }
+    </script>
+  </body>
+</html>
