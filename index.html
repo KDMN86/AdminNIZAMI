@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- LOGIN CONTAINER -->
+    <!-- LOGIN -->
     <div class="container" id="loginContainer">
       <h2>Login Admin</h2>
       <input
@@ -15,14 +15,24 @@
         id="adminPassword"
         placeholder="Masukkan Password Admin"
       />
-      <button onclick="login()">Login</button>
-      <p id="loginError" class="error" style="display: none">Password salah!</p>
+      <button id="btnLogin">Login</button>
+      <p id="loginError" class="error hidden">Password salah!</p>
     </div>
 
-    <!-- ADMIN PANEL (TERSEMBUNYI) -->
+    <!-- ADMIN PANEL -->
     <div class="container hidden" id="adminPanel">
       <h2>Admin Panel</h2>
-      <!-- Dropdown Pemilihan Sheet -->
+
+      <!-- 1️⃣ Cek Status Peserta -->
+      <button
+        onclick="location.href='cek-status.html'"
+        class="btn-kalender"
+        style="margin-bottom: 20px"
+      >
+        Cek Status Peserta
+      </button>
+
+      <!-- 2️⃣ Pilih Sheet -->
       <label for="sheetSelector">Pilih Sheet:</label>
       <select id="sheetSelector">
         <option value="IBU">IBU</option>
@@ -32,33 +42,22 @@
         <option value="DELI">DELI</option>
       </select>
 
+      <!-- 3️⃣ Tabs -->
       <div class="tab-buttons">
-        <button onclick="switchTab('setoran')" class="active">
+        <button onclick="location.href='kalkulator-admin.html'">
           Tambah Setoran
         </button>
-        <button onclick="switchTab('peserta')">Tambah Peserta</button>
+        <button
+          id="pesertaTabBtn"
+          class="active"
+          onclick="switchTab('peserta')"
+        >
+          Tambah Peserta
+        </button>
       </div>
 
-      <!-- Form Tambah Setoran (FITUR FILTER) -->
-      <div class="form-container active" id="formSetoran">
-        <h3>Tambah Setoran Peserta</h3>
-        <select id="filterType">
-          <option value="no">No Urut</option>
-          <option value="id" selected>ID Peserta</option>
-          <option value="nama">Nama Peserta</option>
-          <option value="grup">Grup ID</option>
-        </select>
-        <input type="text" id="filterValue" placeholder="Masukkan kata kunci" />
-        <button onclick="cariPeserta()">Cari Peserta</button>
-        <button class="reset-btn" onclick="resetFilter()">Reset</button>
-        <!-- Hasil pencarian peserta -->
-        <div id="hasilPencarian" class="updated-container hidden"></div>
-        <!-- Container data peserta terbaru setelah penambahan setoran -->
-        <div id="updatedParticipant" class="updated-container hidden"></div>
-      </div>
-
-      <!-- Form Tambah Peserta -->
-      <div class="form-container" id="formPeserta">
+      <!-- 4️⃣ Form Tambah Peserta -->
+      <div id="formPeserta" class="form-container active">
         <h3>Tambah Peserta Baru</h3>
         <input type="text" id="idPesertaBaru" placeholder="ID Peserta" />
         <input type="text" id="namaPeserta" placeholder="Nama" />
@@ -95,102 +94,22 @@
           placeholder="Total Setoran"
           readonly
         />
-        <!-- Container daftar barang untuk paket Mingguan -->
+
+        <!-- Barang khusus Mingguan -->
         <div id="barangContainer" class="hidden">
-          <h4>Pilih Barang untuk Setoran</h4>
+          <h4>Pilih Barang untuk Paket Mingguan</h4>
           <div id="barangList"></div>
           <p>Total Setoran Barang: Rp <span id="totalSetoranBarang">0</span></p>
         </div>
+
         <input type="text" id="grupID" placeholder="Grup ID" />
         <button onclick="tambahPeserta()">Tambah Peserta</button>
         <button class="reset-btn" onclick="resetForm('peserta')">Reset</button>
+
         <p id="pesertaStatus" class="status hidden"></p>
-        <div id="successMessage" class="hidden">
-          <p id="successText"></p>
-        </div>
       </div>
-
-      <!-- Kalkulator Admin -->
-      <!-- Tambahkan kelas "hidden" agar kontainer ini tersembunyi secara default -->
-      <div class="form-container hidden" id="kalkulatorAdminContainer">
-        <h3>Kalkulator Admin</h3>
-        <div class="input-group">
-          <input
-            type="text"
-            id="calcGrupInput"
-            placeholder="Masukkan Grup ID"
-          />
-          <button onclick="cariGrupCalc()">Cek Data</button>
-          <button onclick="resetTabelCalc()">Reset</button>
-        </div>
-        <div class="table-container">
-          <table id="calcResultTable" class="hidden">
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>Nama</th>
-                <th>Jenis Paket</th>
-                <th>Nilai Setoran (Rp)</th>
-                <th>Jumlah Setoran</th>
-                <th>Subtotal (Rp)</th>
-              </tr>
-            </thead>
-            <tbody id="calcResultBody"></tbody>
-            <tfoot>
-              <tr>
-                <td colspan="5">Total</td>
-                <td id="calcGrandTotal">Rp 0</td>
-              </tr>
-            </tfoot>
-          </table>
-          <button
-            class="btn-submit hidden"
-            id="calcSubmitBtn"
-            onclick="kirimSemuaSetoranCalc()"
-          >
-            Input Semua Setoran
-          </button>
-        </div>
-      </div>
-
-      <!-- Tombol Navigasi Kalkulator Admin -->
-      <div style="margin-top: 30px; text-align: center">
-        <button onclick="bukaKalkulatorAdmin()" class="package-button">
-          Kalkulator Admin
-        </button>
-      </div>
-    </div>
-
-    <div id="floatingStatus" class="success">
-      <span id="statusMessage"></span>
-      <span id="notifClose" class="close-btn" onclick="hideFloatingStatus()"
-        >&times;</span
-      >
-    </div>
-
-    <div
-      id="notifOverlay"
-      class="notif-overlay"
-      onclick="hideNotifModal()"
-    ></div>
-    <div id="notifModal" class="notif-modal">
-      <span class="close-btn" onclick="hideNotifModal()">&times;</span>
-      <div id="notifContent"></div>
     </div>
 
     <script src="script.js"></script>
-    <script>
-      // Fungsi untuk menampilkan kalkulator admin
-      function bukaKalkulatorAdmin() {
-        // Sembunyikan form setoran dan peserta
-        window.location.href = 'kalkulator-admin.html';
-        document.getElementById('formSetoran').classList.remove('active');
-        document.getElementById('formPeserta').classList.remove('active');
-        // Tampilkan kalkulator admin dengan menghapus kelas "hidden"
-        document
-          .getElementById('kalkulatorAdminContainer')
-          .classList.remove('hidden');
-      }
-    </script>
   </body>
 </html>
