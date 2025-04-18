@@ -5,137 +5,190 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kalkulator Admin</title>
     <style>
-      body {
-        font-family: 'Poppins', sans-serif;
-        padding: 20px;
-        background-color: #101010;
-        color: #f0f0f0;
+      /* 1. Box-sizing reset for predictable sizing */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
       }
+
+      /* 2. CSS variables for easy theming */
+      :root {
+        --bg: #101010;
+        --fg: #f0f0f0;
+        --primary: #007bff;
+        --success: #28a745;
+        --success-dark: #218838;
+        --input-bg: #222;
+        --border-color: #444;
+        --transition-speed: 0.2s;
+        --footer-height: 60px;
+      }
+
+      body {
+        margin: 0;
+        padding: 1rem;
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--bg);
+        color: var(--fg);
+      }
+
       h2 {
         text-align: center;
-        color: #f0f0f0;
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
       }
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+      }
+
+      /* 3. Styled select with cross-browser appearance reset */
+      #sheetSelector {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: 5px;
+        background-color: var(--input-bg);
+        color: var(--fg);
+        margin-bottom: 1rem;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><polygon points='0,4 6,10 12,4' fill='%23f0f0f0'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 12px;
+        transition: border-color var(--transition-speed) ease;
+      }
+      #sheetSelector:focus {
+        border-color: var(--primary);
+        outline: none;
+      }
+
       .input-group {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 0.5rem;
         justify-content: center;
-        margin-bottom: 20px;
+        margin-bottom: 1rem;
       }
-      input,
-      button {
-        padding: 10px;
-        font-size: 16px;
-        background-color: #222;
-        color: #f0f0f0;
-        border: 1px solid #444;
+      .input-group input,
+      .input-group button {
+        min-height: 44px; /* Touch target */
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        background-color: var(--input-bg);
+        color: var(--fg);
+        border: 1px solid var(--border-color);
         border-radius: 6px;
+        transition: background-color var(--transition-speed) ease;
       }
-      button:hover {
+      .input-group input:focus,
+      .input-group button:focus {
+        outline: 2px solid #55aaff;
+        outline-offset: 2px;
+      }
+      .input-group button {
+        cursor: pointer;
+      }
+      .input-group button:hover {
         background-color: #333;
       }
+
       .table-container {
         overflow-x: auto;
+        margin-bottom: calc(
+          env(safe-area-inset-bottom, 0px) + var(--footer-height)
+        );
       }
+
       table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 20px;
+        margin-top: 0.5rem;
       }
       th,
       td {
         border: 1px solid #555;
-        padding: 8px;
+        padding: 0.5rem;
         text-align: center;
-        color: #f0f0f0;
+        color: var(--fg);
+        font-size: 0.9rem;
       }
       th {
-        background-color: #007bff;
-        color: white;
+        background-color: var(--primary);
+        color: #fff;
       }
       tfoot td {
         font-weight: bold;
         background-color: #333;
         color: #fff;
       }
-      .btn-submit {
-        display: block;
-        margin: 20px auto 0;
-        background-color: #28a745;
-        color: white;
-        font-weight: bold;
-      }
-      .btn-submit:hover {
-        background-color: #218838;
-      }
+
       .hidden {
         display: none;
       }
+
+      /* 4. Floating footer */
+      .footer-floating {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: var(--footer-height);
+        background: rgba(17, 17, 17, 0.95);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 1rem;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        transition: transform var(--transition-speed) ease;
+      }
+      .footer-floating .total {
+        font-size: 1.1rem;
+        font-weight: bold;
+      }
+      .footer-floating button {
+        background-color: var(--success);
+        color: white;
+        font-weight: bold;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color var(--transition-speed) ease;
+      }
+      .footer-floating button:hover {
+        background-color: var(--success-dark);
+      }
+
+      /* 5. Responsive tweaks */
       @media screen and (max-width: 600px) {
-        table,
-        thead,
-        tbody,
         th,
-        td,
-        tr {
-          font-size: 14px;
+        td {
+          font-size: 0.8rem;
+          padding: 0.4rem;
         }
         .input-group {
           flex-direction: column;
           align-items: stretch;
         }
-        input,
-        button {
+        .input-group input,
+        .input-group button,
+        #sheetSelector {
           width: 100%;
         }
-      }
-
-      /* Style khusus untuk dropdown pemilihan sheet */
-      #sheetSelector {
-        width: 100%;
-        padding: 10px 12px;
-        font-size: 1rem;
-        border: 1px solid #444;
-        border-radius: 5px;
-        background-color: #222;
-        color: #f0f0f0;
-        margin: 10px 0;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        outline: none;
-      }
-
-      /* Optional: Tambahan style untuk dropdown arrow */
-      #sheetSelector {
-        background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><polygon points='0,4 6,10 12,4' fill='%23f0f0f0'/></svg>");
-        background-repeat: no-repeat;
-        background-position: right 10px center;
-        background-size: 12px;
-      }
-
-      .btn-submit {
-        display: block;
-        margin: 20px auto;
-        background-color: #28a745;
-        color: white;
-        font-weight: bold;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 6px;
-      }
-      .btn-submit:hover {
-        background-color: #218838;
-      }
-
-      .table-container {
-        overflow-x: auto;
       }
     </style>
   </head>
   <body>
     <h2>Kalkulator Admin</h2>
-    <!-- Di dalam container Admin Panel -->
+
     <label for="sheetSelector">Pilih Sheet:</label>
     <select id="sheetSelector">
       <option value="IBU">IBU</option>
@@ -150,6 +203,7 @@
       <button onclick="cariGrup()">Cek Data</button>
       <button onclick="resetTabel()">Reset</button>
     </div>
+
     <div class="table-container">
       <table id="resultTable" class="hidden">
         <thead>
@@ -158,6 +212,7 @@
             <th>Nama</th>
             <th>Jenis Paket</th>
             <th>Nilai Setoran (Rp)</th>
+            <th>Setoran Sebelumnya</th>
             <th>Jumlah Setoran</th>
             <th>Subtotal (Rp)</th>
           </tr>
@@ -165,16 +220,16 @@
         <tbody id="resultBody"></tbody>
         <tfoot>
           <tr>
-            <td colspan="5">Total</td>
-            <td id="grandTotal">Rp 0</td>
+            <td colspan="6">Total</td>
+            <td id="grandTotalTable">Rp 0</td>
           </tr>
         </tfoot>
       </table>
-      <button
-        class="btn-submit hidden"
-        id="submitBtn"
-        onclick="kirimSemuaSetoran()"
-      >
+    </div>
+
+    <div id="calcFooter" class="footer-floating hidden">
+      <div class="total">Total: <span id="grandTotalFloating">Rp 0</span></div>
+      <button id="submitBtn" onclick="kirimSemuaSetoran()">
         Input Semua Setoran
       </button>
     </div>
@@ -183,10 +238,8 @@
       const API_URL =
         'https://script.google.com/macros/s/AKfycbzBAk8v5BxFnd40_hVz7urROlVew0JIZB6iQ44wIWcqD1Fcgzi029CviLPTB-ggLFGZ/exec';
 
-      // Fungsi getSheetName: Jika ada dropdown, ambil nilainya; jika tidak, kembalikan default 'IBU'
       function getSheetName() {
-        const sheetSelect = document.getElementById('sheetSelector');
-        return sheetSelect ? sheetSelect.value : 'IBU';
+        return document.getElementById('sheetSelector').value || 'IBU';
       }
 
       function cariGrup() {
@@ -198,149 +251,105 @@
 
         const table = document.getElementById('resultTable');
         const tbody = document.getElementById('resultBody');
-        const grandTotal = document.getElementById('grandTotal');
-        const submitBtn = document.getElementById('submitBtn');
+        const gtTable = document.getElementById('grandTotalTable');
+        const gtFloat = document.getElementById('grandTotalFloating');
+        const footer = document.getElementById('calcFooter');
 
-        // Update header tabel agar mencakup kolom "Setoran Masuk"
-        table.querySelector('thead').innerHTML = `
-    <tr>
-      <th>No</th>
-      <th>Nama</th>
-      <th>Jenis Paket</th>
-      <th>Nilai Setoran (Rp)</th>
-      <th>Setoran Sebelumnya</th>
-      <th>Jumlah Setoran</th>
-      <th>Subtotal (Rp)</th>
-    </tr>
-  `;
-
-        tbody.innerHTML = '<tr><td colspan="7">Loading...</td></tr>';
+        // show loading
+        tbody.innerHTML = '<tr><td colspan="7">Loading…</td></tr>';
         table.classList.remove('hidden');
-        submitBtn.classList.add('hidden');
+        footer.classList.add('hidden');
 
-        fetch(`${API_URL}?group=${grupID}`)
-          .then((res) => res.json())
+        fetch(
+          `${API_URL}?sheetName=${getSheetName()}&group=${encodeURIComponent(
+            grupID
+          )}`
+        )
+          .then((r) => r.json())
           .then((data) => {
-            if (data.error || data.length === 0) {
+            if (data.error || !data.length) {
               tbody.innerHTML = `<tr><td colspan="7" style="color:red;">${
                 data.error || 'Data tidak ditemukan'
               }</td></tr>`;
-              grandTotal.textContent = 'Rp 0';
+              updateTotals(0);
               return;
             }
-
-            let html = '';
-            data.forEach((peserta) => {
-              const nilai = Number(peserta.nilaiSetoran) || 0;
-              // Munculkan nilai setoran yang sudah dilakukan (kolom G)
-              const setoranMasuk = Number(peserta.setoranDilakukan) || 0;
-              html += `
-          <tr data-id="${peserta.idPeserta}">
-            <td>${peserta.no}</td>
-            <td>${peserta.nama}</td>
-            <td>${peserta.jenisPaket}</td>
-            <td>${nilai}</td>
-            <td>${setoranMasuk}</td>
-            <td>
-              <input type="number" value="0" min="0" style="width: 60px"
-                oninput="hitungSubtotal(this, ${nilai})"/>
-            </td>
-            <td class="subtotal">Rp 0</td>
-          </tr>
-        `;
-            });
-            tbody.innerHTML = html;
-            submitBtn.classList.remove('hidden');
-            hitungTotalSemua();
+            tbody.innerHTML = data
+              .map((peserta) => {
+                const nilai = Number(peserta.nilaiSetoran) || 0;
+                const masuk = Number(peserta.setoranDilakukan) || 0;
+                return `<tr data-id="${peserta.idPeserta}">
+              <td>${peserta.no}</td>
+              <td>${peserta.nama}</td>
+              <td>${peserta.jenisPaket}</td>
+              <td>${nilai.toLocaleString()}</td>
+              <td>${masuk}</td>
+              <td><input type="number" value="0" min="0" style="width:60px"
+                     oninput="hitungSubtotal(this, ${nilai})"></td>
+              <td class="subtotal">Rp 0</td>
+            </tr>`;
+              })
+              .join('');
+            updateTotals();
+            footer.classList.remove('hidden');
           })
-          .catch((error) => {
-            console.error('Error:', error);
+          .catch((err) => {
+            console.error(err);
           });
       }
 
       function hitungSubtotal(input, nilai) {
         const row = input.closest('tr');
-        const jumlah = Number(input.value) || 0;
-        const subtotal = jumlah * nilai;
-        row.querySelector(
-          '.subtotal'
-        ).textContent = `Rp ${subtotal.toLocaleString()}`;
-        hitungTotalSemua();
+        const qty = Number(input.value) || 0;
+        const sub = qty * nilai;
+        row.querySelector('.subtotal').textContent =
+          'Rp ' + sub.toLocaleString();
+        updateTotals();
       }
 
-      function hitungTotalSemua() {
-        const subtotalCells = document.querySelectorAll('.subtotal');
+      function updateTotals(fixed = undefined) {
         let total = 0;
-        subtotalCells.forEach((cell) => {
-          const angka = Number(cell.textContent.replace(/[^\d]/g, '')) || 0;
-          total += angka;
+        document.querySelectorAll('.subtotal').forEach((cell) => {
+          total += Number(cell.textContent.replace(/[^\d]/g, '')) || 0;
         });
-        document.getElementById(
-          'grandTotal'
-        ).textContent = `Rp ${total.toLocaleString()}`;
+        document.getElementById('grandTotalTable').textContent =
+          'Rp ' + total.toLocaleString();
+        document.getElementById('grandTotalFloating').textContent =
+          'Rp ' + total.toLocaleString();
       }
 
       function resetTabel() {
-        const inputs = document.querySelectorAll('tbody input');
-        inputs.forEach((input) => {
-          input.value = 0;
-          input.dispatchEvent(new Event('input'));
-        });
+        document.getElementById('grupInput').value = '';
+        document.getElementById('resultBody').innerHTML = '';
+        document.getElementById('resultTable').classList.add('hidden');
+        document.getElementById('calcFooter').classList.add('hidden');
+        updateTotals(0);
       }
 
-      // Fungsi untuk mengirim semua input setoran sekaligus
       function kirimSemuaSetoran() {
-        // Ambil semua baris dari tbody
+        const sheetName = getSheetName();
         const rows = document.querySelectorAll('#resultBody tr');
-        const formDataList = [];
-
-        rows.forEach((row) => {
-          const idPeserta = row.getAttribute('data-id');
-          if (!idPeserta) return;
-          const input = row.querySelector('input[type="number"]');
-          if (!input) return;
-          const jumlah = Number(input.value);
-          if (jumlah > 0) {
-            formDataList.push({ idPeserta, jumlah });
+        const tasks = [];
+        rows.forEach((r) => {
+          const id = r.dataset.id;
+          const inp = r.querySelector('input');
+          const jml = Number(inp.value) || 0;
+          if (id && jml > 0) {
+            const fd = new FormData();
+            fd.append('sheetName', sheetName);
+            fd.append('action', 'addSetoran');
+            fd.append('idPeserta', id);
+            fd.append('setoranBaru', jml);
+            tasks.push(fetch(API_URL, { method: 'POST', body: fd }));
           }
         });
-
-        if (formDataList.length === 0) {
-          alert('Tidak ada setoran yang diinput!');
+        if (!tasks.length) {
+          alert('Tidak ada setoran untuk dikirim');
           return;
         }
-
-        // Gunakan fungsi getSheetName() agar data masuk ke sheet yang dipilih
-        const sheetName = getSheetName();
-
-        const promises = formDataList.map((item) => {
-          const formData = new FormData();
-          formData.append('sheetName', sheetName);
-          formData.append('action', 'addSetoran');
-          formData.append('idPeserta', item.idPeserta);
-          formData.append('setoranBaru', item.jumlah);
-
-          return fetch(API_URL, { method: 'POST', body: formData })
-            .then((res) => res.json())
-            .then((data) => {
-              if (data.error) {
-                console.error(`${item.idPeserta}: ${data.error}`);
-                // Lempar error agar Promise.all() menolak (reject)
-                throw new Error(`${item.idPeserta}: ${data.error}`);
-              } else {
-                console.log(`${item.idPeserta}: ${data.success}`);
-              }
-              return data;
-            });
-        });
-
-        Promise.all(promises)
-          .then(() => {
-            alert('Semua setoran berhasil dikirim!');
-          })
-          .catch((err) => {
-            alert(`Terjadi kesalahan: ${err.message}`);
-          });
+        Promise.all(tasks)
+          .then(() => alert('Semua setoran berhasil dikirim!'))
+          .catch((e) => alert('Error: ' + e.message));
       }
     </script>
   </body>
