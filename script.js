@@ -1,34 +1,83 @@
-const ADMIN_PASSWORD = 'admin123';
-const SESSION_KEY = 'adminAuthTime';
-function initAuth() {
-  const t = localStorage.getItem(SESSION_KEY);
-  if (t && Date.now() - +t < 10 * 60 * 1000) {
-    loginSuccess();
-    return true;
+const scriptURL =
+  'https://script.google.com/macros/s/AKfycbw6VZbM88dWJ_oQfLaEIsrIL_YqOgg-a0vhF4j7vnwaeNtvI2hMyyL4v3JimDre5gVe/exec';
+const API_URL = scriptURL;
+
+// Tombol Login diklik
+document.getElementById('btnLogin').addEventListener('click', login);
+
+// Saat halaman selesai dimuat, periksa token
+window.addEventListener('DOMContentLoaded', async () => {
+  const ok = await initAuth();
+  if (ok) {
+    loginSuccess(); // ✅ tampilkan UI admin jika token masih valid
+  } else {
+    document.getElementById('loginContainer').classList.remove('hidden');
+    document.getElementById('adminPanel').classList.add('hidden');
   }
-  return false;
+});
+
+// Fungsi login
+function login() {
+  const pw = document.getElementById('adminPassword').value;
+  const form = new FormData();
+  form.append('action', 'verifyAdmin');
+  form.append('password', pw);
+
+  fetch(API_URL, { method: 'POST', body: form })
+    .then((r) => r.json())
+    .then((data) => {
+      if (data.success && data.token) {
+        localStorage.setItem('adminToken', data.token);
+        loginSuccess();
+      } else {
+        showLoginError();
+      }
+    })
+    .catch(() => {
+      showLoginError();
+    });
 }
+
+// Tampilkan UI admin
 function loginSuccess() {
   document.getElementById('loginContainer').classList.add('hidden');
   document.getElementById('adminPanel').classList.remove('hidden');
   document.getElementById('loginError').classList.add('hidden');
 }
-function login() {
-  const pw = document.getElementById('adminPassword').value.trim();
-  if (pw === ADMIN_PASSWORD) {
-    localStorage.setItem(SESSION_KEY, Date.now());
-    loginSuccess();
-  } else {
-    document.getElementById('loginError').classList.remove('hidden');
+
+// Tampilkan error saat login gagal
+function showLoginError() {
+  document.getElementById('loginError').classList.remove('hidden');
+}
+
+// Ambil token dari localStorage
+function getToken() {
+  return localStorage.getItem('adminToken') || '';
+}
+
+// Verifikasi token saat load halaman
+async function initAuth() {
+  const token = getToken();
+  if (!token) return false;
+
+  const form = new FormData();
+  form.append('action', 'verifyAdmin');
+  form.append('token', token);
+
+  try {
+    const r = await fetch(API_URL, { method: 'POST', body: form });
+    const data = await r.json();
+    return data.success;
+  } catch {
+    return false;
   }
 }
-document.getElementById('btnLogin').addEventListener('click', login);
-window.addEventListener('DOMContentLoaded', () => {
-  if (!initAuth()) {
-    document.getElementById('loginContainer').classList.remove('hidden');
-    document.getElementById('adminPanel').classList.add('hidden');
-  }
-});
+
+function redirectLogin() {
+  localStorage.removeItem('adminToken');
+  alert('🔒 Token tidak valid atau kadaluwarsa. Silakan login ulang.');
+  window.location.href = 'index.html';
+}
 
 // ————— Tab logic —————
 function switchTab(tab) {
@@ -36,9 +85,6 @@ function switchTab(tab) {
   document.getElementById('formPeserta').classList.add('active');
   document.getElementById('pesertaTabBtn').classList.add('active');
 }
-
-const scriptURL =
-  'https://script.google.com/macros/s/AKfycbzBAk8v5BxFnd40_hVz7urROlVew0JIZB6iQ44wIWcqD1Fcgzi029CviLPTB-ggLFGZ/exec';
 
 // Mapping paket (gunakan sesuai kebutuhan)
 const paketMapping = {
@@ -167,17 +213,6 @@ const barangMingguan = [
 
 // Objek untuk menyimpan pesanan (kuantitas) peserta
 let selectedItems = {};
-
-// ===================== FUNGSI LOGIN =====================
-function login() {
-  const inputPassword = document.getElementById('adminPassword').value.trim();
-  if (inputPassword === ADMIN_PASSWORD) {
-    document.getElementById('loginContainer').classList.add('hidden');
-    document.getElementById('adminPanel').classList.remove('hidden');
-  } else {
-    document.getElementById('loginError').style.display = 'block';
-  }
-}
 
 // ===================== SWITCH TAB =====================
 function switchTab(tab) {
@@ -570,12 +605,22 @@ function tambahPeserta() {
   const totalSetoran = document.getElementById('totalSetoran').value.trim();
   const grupID = document.getElementById('grupID').value.trim();
 
+  // 1) Validasi input
   if (!idPeserta || !nama || !jenisPaket || !totalSetoran || !grupID) {
-    tampilkanStatus(null, 'Semua field harus diisi!', 'error');
+    alert('❌ Semua field harus diisi!');
     return;
   }
 
+  // 2) Ambil token yang disimpan waktu login
+  const token = localStorage.getItem('adminToken');
+  if (!token) {
+    alert('⚠️ Anda belum login atau session telah berakhir.');
+    return;
+  }
+
+  // 3) Siapkan FormData
   const formData = new FormData();
+  formData.append('token', token);
   formData.append('sheetName', sheetName);
   formData.append('action', 'addPeserta');
   formData.append('idPeserta', idPeserta);
@@ -589,18 +634,27 @@ function tambahPeserta() {
     document.getElementById('setoranBarang').value.trim()
   );
 
-  fetch(scriptURL, { method: 'POST', body: formData })
-    .then((res) => res.json())
+  // 4) Kirim ke Apps Script
+  fetch(scriptURL, {
+    method: 'POST',
+    body: formData,
+  })
+    .then((r) => r.json())
     .then((data) => {
       if (data.success) {
         alert('✅ ' + data.success);
-        resetForm();
+        // reset hanya form peserta
+        resetForm('peserta');
+      } else if (data.error === 'Unauthorized') {
+        alert('⚠️ Token tidak valid. Silakan login ulang.');
+        // bisa arahkan ke halaman login
       } else {
-        tampilkanStatus(null, data.error, 'error');
+        alert('❌ ' + (data.error || 'Gagal menambahkan peserta'));
       }
     })
-    .catch(() => {
-      tampilkanStatus(null, 'Gagal menambahkan peserta!', 'error');
+    .catch((err) => {
+      console.error(err);
+      alert('🚫 Gagal menghubungi server!');
     });
 }
 
