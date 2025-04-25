@@ -23,20 +23,13 @@
     <div class="container hidden" id="adminPanel">
       <h2>Admin Panel</h2>
 
-      <!-- 1️⃣ Cek Status Peserta -->
-      <button
-        onclick="location.href='cek-status.html'"
-        class="btn-kalender"
-        style="margin-bottom: 20px"
-      >
+      <!-- 1️⃣ Cek Status & Tabungan -->
+      <button onclick="location.href='cek-status.html'" class="btn-kalender">
         Cek Status Peserta
       </button>
-
-      <!-- 1️⃣ Tambah: Akses Admin Tabungan -->
       <button
         onclick="location.href='tabungan-admin.html'"
         class="btn-kalender"
-        style="margin-bottom: 20px"
       >
         Admin Tabungan
       </button>
@@ -65,8 +58,13 @@
         </button>
       </div>
 
-      <!-- 4️⃣ Form Tambah Peserta -->
-      <div id="formPeserta" class="form-container active">
+      <!-- 4️⃣ Form Tambah Setoran (di‐hide karena ini page peserta) -->
+      <div id="formSetoran" class="form-container hidden">
+        <!-- bila butuh form setoran di sini, isi... -->
+      </div>
+
+      <!-- 5️⃣ Form Tambah Peserta (default hidden) -->
+      <div id="formPeserta" class="form-container hidden">
         <h3>Tambah Peserta Baru</h3>
         <input type="text" id="idPesertaBaru" placeholder="ID Peserta" />
         <input type="text" id="namaPeserta" placeholder="Nama" />
@@ -104,14 +102,15 @@
           readonly
         />
 
-        <!-- Barang khusus Mingguan -->
         <div id="barangContainer" class="hidden">
           <h4>Pilih Barang untuk Paket Mingguan</h4>
           <div id="barangList"></div>
           <p>Total Setoran Barang: Rp <span id="totalSetoranBarang">0</span></p>
         </div>
 
-        <input type="text" id="grupID" placeholder="Grup ID" />
+        <input type="text" id="grupID" placeholder="Grup ID" list="groupList" />
+        <datalist id="groupList"></datalist>
+
         <button onclick="tambahPeserta()">Tambah Peserta</button>
         <button class="reset-btn" onclick="resetForm('peserta')">Reset</button>
 
