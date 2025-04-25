@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Tabungan</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h2>Admin Tabungan</h2>
+
+      <button onclick="location.href='index.html'" style="margin-bottom: 20px">
+        ← Kembali ke Admin Utama
+      </button>
+
+      <!-- Form Tambah Peserta Tabungan -->
+      <div class="form-section">
+        <h3>Tambah Peserta Tabungan</h3>
+        <input type="text" id="idTabunganBaru" placeholder="ID Peserta" />
+        <input type="text" id="namaTabunganBaru" placeholder="Nama Peserta" />
+        <button onclick="tambahPesertaTabungan()">Tambah Peserta</button>
+      </div>
+
+      <hr style="margin: 20px 0" />
+
+      <!-- Form Input Tabungan -->
+      <div class="form-section">
+        <h3>Input Tabungan Peserta</h3>
+        <input type="text" id="idTabunganSetor" placeholder="ID Peserta" />
+        <input
+          type="number"
+          id="jumlahTabungan"
+          placeholder="Jumlah Tabungan (Rp)"
+        />
+        <button onclick="inputTabunganPeserta()">Input Tabungan</button>
+      </div>
+    </div>
+
+    <script src="tabungan-admin.js"></script>
+  </body>
+</html>
