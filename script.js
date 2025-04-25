@@ -81,10 +81,23 @@ function redirectLogin() {
 
 // ————— Tab logic —————
 function switchTab(tab) {
-  // hanya peserta yang inline di halaman ini
-  document.getElementById('formPeserta').classList.add('active');
-  document.getElementById('pesertaTabBtn').classList.add('active');
+  // reset active class
+  setoranTabBtn.classList.remove('active');
+  pesertaTabBtn.classList.remove('active');
+  formSetoran.classList.add('hidden');
+  formPeserta.classList.add('hidden');
+
+  if (tab === 'setoran') {
+    setoranTabBtn.classList.add('active');
+    formSetoran.classList.remove('hidden');
+  } else {
+    pesertaTabBtn.classList.add('active');
+    formPeserta.classList.remove('hidden');
+  }
 }
+
+// inisialisasi: sembunyikan kedua form, aktifkan tab setoran
+switchTab('setoran');
 
 // Mapping paket (gunakan sesuai kebutuhan)
 const paketMapping = {
