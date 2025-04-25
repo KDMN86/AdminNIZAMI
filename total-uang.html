@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Total Uang</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      body {
+        font-family: 'Poppins', sans-serif;
+        padding: 1rem;
+        background: #101010;
+        color: #f0f0f0;
+      }
+      .container {
+        max-width: 400px;
+        margin: auto;
+      }
+      label,
+      p {
+        display: block;
+        margin: 0.5rem 0;
+      }
+      input {
+        width: 100%;
+        padding: 0.5rem;
+        margin-top: 0.25rem;
+        background: #222;
+        border: 1px solid #444;
+        color: #f0f0f0;
+      }
+      button {
+        width: 100%;
+        padding: 0.75rem;
+        margin-top: 1rem;
+        background: #28a745;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #218838;
+      }
+      .results p {
+        margin: 0.25rem 0;
+      }
+      .back {
+        margin-top: 1.5rem;
+        background: #007bff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Rekap Total Uang</h2>
+
+      <!-- Input editable -->
+      <label>
+        Uang Cash (C1):
+        <input type="number" id="cashInput" />
+      </label>
+      <label>
+        Uang di ATM (C2):
+        <input type="number" id="atmInput" />
+      </label>
+      <button id="saveBtn">Simpan Perubahan</button>
+
+      <!-- Tampilkan hasil -->
+      <div class="results">
+        <p>Total Uang Cash (C3): Rp <span id="totalCash">0</span></p>
+        <p>Total Uang Paket (C4): Rp <span id="totalPaket">0</span></p>
+        <p>Total Uang Admin (C5): Rp <span id="totalAdmin">0</span></p>
+      </div>
+
+      <button class="back" onclick="location.href='index.html'">
+        ← Kembali
+      </button>
+    </div>
+
+    <script>
+      const API_URL =
+        'https://script.google.com/macros/s/AKfycbzPIiNLyxKZZkHJbpppTjM3OPu3UjtoUinFpkNiYree1Mc3kSJ-23rnhleP9F67MIjW/exec';
+
+      function getToken() {
+        return localStorage.getItem('adminToken') || '';
+      }
+
+      async function initAuth() {
+        const token = getToken();
+        if (!token) {
+          alert('Silakan login ulang');
+          location.href = 'index.html';
+          return false;
+        }
+        const form = new FormData();
+        form.append('action', 'verifyAdmin');
+        form.append('token', token);
+        const res = await fetch(API_URL, { method: 'POST', body: form });
+        const data = await res.json();
+        if (!data.success) {
+          localStorage.removeItem('adminToken');
+          alert('Token kadaluarsa');
+          location.href = 'index.html';
+          return false;
+        }
+        return true;
+      }
+
+      function formatRupiah(x) {
+        return Number(x).toLocaleString('id-ID');
+      }
+
+      async function loadTotals() {
+        const form = new FormData();
+        form.append('action', 'getTotalUang');
+        form.append('sheetName', 'TOTAL UANG');
+        form.append('token', getToken());
+
+        const res = await fetch(API_URL, { method: 'POST', body: form });
+        const data = await res.json();
+        if (data.error) return alert(data.error);
+
+        // isi input dengan C1 & C2
+        document.getElementById('cashInput').value = data.cash ?? 0;
+        document.getElementById('atmInput').value = data.atm ?? 0;
+        // tampilkan C3,C4,C5
+        document.getElementById('totalCash').textContent = formatRupiah(
+          data.totalCash
+        );
+        document.getElementById('totalPaket').textContent = formatRupiah(
+          data.totalPaket
+        );
+        document.getElementById('totalAdmin').textContent = formatRupiah(
+          data.totalAdmin
+        );
+      }
+
+      async function saveCashAtm() {
+        const cash = Number(document.getElementById('cashInput').value) || 0;
+        const atm = Number(document.getElementById('atmInput').value) || 0;
+
+        const form = new FormData();
+        form.append('action', 'setTotalUang');
+        form.append('sheetName', 'TOTAL UANG');
+        form.append('cash', cash);
+        form.append('atm', atm);
+        form.append('token', getToken());
+
+        const res = await fetch(API_URL, { method: 'POST', body: form });
+        const data = await res.json();
+        if (data.success) {
+          alert('✅ ' + data.success);
+          loadTotals();
+        } else {
+          alert('❌ ' + (data.error || 'Gagal menyimpan'));
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        if (!(await initAuth())) return;
+        document
+          .getElementById('saveBtn')
+          .addEventListener('click', saveCashAtm);
+        loadTotals();
+      });
+    </script>
+  </body>
+</html>
