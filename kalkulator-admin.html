@@ -5,24 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kalkulator Admin</title>
     <style>
-      /* 1. Box-sizing reset for predictable sizing */
+      /* 1. Box-sizing reset */
       *,
       *::before,
       *::after {
         box-sizing: border-box;
       }
 
-      /* 2. CSS variables for easy theming */
+      /* 2. CSS variables */
       :root {
         --bg: #101010;
         --fg: #f0f0f0;
         --primary: #007bff;
         --success: #28a745;
         --success-dark: #218838;
+        --danger: #dc3545;
+        --danger-dark: #c82333;
         --input-bg: #222;
         --border-color: #444;
         --transition-speed: 0.2s;
         --footer-height: 60px;
+        --reset: #bf9106;
+        --reset-dark: #86600a;
       }
 
       body {
@@ -45,24 +49,19 @@
         font-weight: bold;
       }
 
-      /* 3. Styled select with cross-browser appearance reset */
       #sheetSelector {
         width: 100%;
         padding: 0.75rem 1rem;
         font-size: 1rem;
         border: 1px solid var(--border-color);
         border-radius: 5px;
-        background-color: var(--input-bg);
+        background: var(--input-bg)
+          url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><polygon points='0,4 6,10 12,4' fill='%23f0f0f0'/></svg>")
+          no-repeat right 1rem center;
         color: var(--fg);
-        margin-bottom: 1rem;
         appearance: none;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><polygon points='0,4 6,10 12,4' fill='%23f0f0f0'/></svg>");
-        background-repeat: no-repeat;
-        background-position: right 1rem center;
-        background-size: 12px;
-        transition: border-color var(--transition-speed) ease;
+        margin-bottom: 1rem;
+        transition: border-color var(--transition-speed);
       }
       #sheetSelector:focus {
         border-color: var(--primary);
@@ -78,14 +77,14 @@
       }
       .input-group input,
       .input-group button {
-        min-height: 44px; /* Touch target */
+        min-height: 44px;
         padding: 0.75rem 1rem;
         font-size: 1rem;
         background-color: var(--input-bg);
         color: var(--fg);
         border: 1px solid var(--border-color);
         border-radius: 6px;
-        transition: background-color var(--transition-speed) ease;
+        transition: background-color var(--transition-speed);
       }
       .input-group input:focus,
       .input-group button:focus {
@@ -99,13 +98,21 @@
         background-color: #333;
       }
 
+      /* reset-button khusus */
+      .reset-button {
+        background-color: var(--reset);
+        color: #f52727;
+      }
+      .reset-button:hover {
+        background-color: var(--reset-dark);
+      }
+
       .table-container {
         overflow-x: auto;
         margin-bottom: calc(
           env(safe-area-inset-bottom, 0px) + var(--footer-height)
         );
       }
-
       table {
         width: 100%;
         border-collapse: collapse;
@@ -128,12 +135,10 @@
         background-color: #333;
         color: #fff;
       }
-
       .hidden {
         display: none;
       }
 
-      /* 4. Floating footer */
       .footer-floating {
         position: fixed;
         bottom: 0;
@@ -147,7 +152,7 @@
         padding: 0 1rem;
         box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
         z-index: 1000;
-        transition: transform var(--transition-speed) ease;
+        transition: transform var(--transition-speed);
       }
       .footer-floating .total {
         font-size: 1.1rem;
@@ -161,13 +166,12 @@
         border: none;
         border-radius: 6px;
         cursor: pointer;
-        transition: background-color var(--transition-speed) ease;
+        transition: background-color var(--transition-speed);
       }
       .footer-floating button:hover {
         background-color: var(--success-dark);
       }
 
-      /* 5. Responsive tweaks */
       @media screen and (max-width: 600px) {
         th,
         td {
@@ -187,7 +191,7 @@
     </style>
   </head>
   <body>
-    <h2>Kalkulator Admin</h2>
+    <h2>Tambah Setoran</h2>
 
     <label for="sheetSelector">Pilih Sheet:</label>
     <select id="sheetSelector">
@@ -199,9 +203,16 @@
     </select>
 
     <div class="input-group">
-      <input type="text" id="grupInput" placeholder="Masukkan Grup ID" />
+      <!-- tambahkan list="groupList" -->
+      <input
+        type="text"
+        id="grupInput"
+        list="groupList"
+        placeholder="Masukkan Grup ID"
+      />
+      <datalist id="groupList"></datalist>
       <button onclick="cariGrup()">Cek Data</button>
-      <button onclick="resetTabel()">Reset</button>
+      <button class="reset-button" onclick="resetTabel()">Reset</button>
     </div>
 
     <div class="table-container">
@@ -221,14 +232,14 @@
         <tfoot>
           <tr>
             <td colspan="6">Total</td>
-            <td id="grandTotalTable">Rp 0</td>
+            <td id="grandTotalTable">Rp 0</td>
           </tr>
         </tfoot>
       </table>
     </div>
 
     <div id="calcFooter" class="footer-floating hidden">
-      <div class="total">Total: <span id="grandTotalFloating">Rp 0</span></div>
+      <div class="total">Total: <span id="grandTotalFloating">Rp 0</span></div>
       <button id="submitBtn" onclick="kirimSemuaSetoran()">
         Input Semua Setoran
       </button>
@@ -236,30 +247,89 @@
 
     <script>
       const API_URL =
-        'https://script.google.com/macros/s/AKfycbzBAk8v5BxFnd40_hVz7urROlVew0JIZB6iQ44wIWcqD1Fcgzi029CviLPTB-ggLFGZ/exec';
+        'https://script.google.com/macros/s/AKfycbw6VZbM88dWJ_oQfLaEIsrIL_YqOgg-a0vhF4j7vnwaeNtvI2hMyyL4v3JimDre5gVe/exec';
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        if (!(await initAuth())) return;
+        loadGroupIds(); // ← fetch datalist segera setelah autentikasi
+      });
 
       function getSheetName() {
-        return document.getElementById('sheetSelector').value || 'IBU';
+        return document.getElementById('sheetSelector').value;
+      }
+      function getToken() {
+        return localStorage.getItem('adminToken') || '';
       }
 
+      /* ➤ autentikasi admin (tidak berubah) */
+      async function initAuth() {
+        const token = getToken();
+        if (!token) {
+          redirectLogin();
+          return false;
+        }
+        const form = new FormData();
+        form.append('action', 'verifyAdmin');
+        form.append('token', token);
+        try {
+          const res = await fetch(API_URL, { method: 'POST', body: form });
+          const data = await res.json();
+          if (!data.success) {
+            redirectLogin();
+            return false;
+          }
+          return true;
+        } catch {
+          redirectLogin();
+          return false;
+        }
+      }
+      function redirectLogin() {
+        localStorage.removeItem('adminToken');
+        alert('🔒 Token tidak valid. Silakan login ulang.');
+        window.location.href = 'index.html';
+      }
+
+      /* ➤ AUTOCOMPLETE: load daftar Grup ID dari kolom I via API */
+      async function loadGroupIds() {
+        const form = new FormData();
+        form.append('action', 'getGroupIds');
+        form.append('sheetName', getSheetName());
+        form.append('token', getToken());
+        try {
+          const res = await fetch(API_URL, { method: 'POST', body: form });
+          const list = await res.json(); // e.g. ["G1","G2",…]
+          const dl = document.getElementById('groupList');
+          dl.innerHTML = '';
+          list.forEach((id) => {
+            const opt = document.createElement('option');
+            opt.value = id;
+            dl.appendChild(opt);
+          });
+        } catch (err) {
+          console.error('Gagal load grup IDs', err);
+        }
+      }
+
+      /* panggil saat sheet berubah atau input difokus */
+      document
+        .getElementById('sheetSelector')
+        .addEventListener('change', loadGroupIds);
+      document
+        .getElementById('grupInput')
+        .addEventListener('focus', loadGroupIds);
+
+      /* ➤ pencarian dan render tabel (sama seperti sebelumnya) */
       function cariGrup() {
         const grupID = document.getElementById('grupInput').value.trim();
         if (!grupID) {
           alert('Masukkan Grup ID!');
           return;
         }
-
-        const table = document.getElementById('resultTable');
         const tbody = document.getElementById('resultBody');
-        const gtTable = document.getElementById('grandTotalTable');
-        const gtFloat = document.getElementById('grandTotalFloating');
-        const footer = document.getElementById('calcFooter');
-
-        // show loading
+        document.getElementById('resultTable').classList.remove('hidden');
+        document.getElementById('calcFooter').classList.add('hidden');
         tbody.innerHTML = '<tr><td colspan="7">Loading…</td></tr>';
-        table.classList.remove('hidden');
-        footer.classList.add('hidden');
-
         fetch(
           `${API_URL}?sheetName=${getSheetName()}&group=${encodeURIComponent(
             grupID
@@ -271,85 +341,92 @@
               tbody.innerHTML = `<tr><td colspan="7" style="color:red;">${
                 data.error || 'Data tidak ditemukan'
               }</td></tr>`;
-              updateTotals(0);
+              updateTotals();
               return;
             }
             tbody.innerHTML = data
-              .map((peserta) => {
-                const nilai = Number(peserta.nilaiSetoran) || 0;
-                const masuk = Number(peserta.setoranDilakukan) || 0;
-                return `<tr data-id="${peserta.idPeserta}">
-              <td>${peserta.no}</td>
-              <td>${peserta.nama}</td>
-              <td>${peserta.jenisPaket}</td>
-              <td>${nilai.toLocaleString()}</td>
-              <td>${masuk}</td>
-              <td><input type="number" value="0" min="0" style="width:60px"
-                     oninput="hitungSubtotal(this, ${nilai})"></td>
-              <td class="subtotal">Rp 0</td>
-            </tr>`;
+              .map((p) => {
+                const nilai = +p.nilaiSetoran || 0,
+                  masuk = +p.setoranDilakukan || 0;
+                return `<tr data-id="${p.idPeserta}">
+                <td>${p.no}</td><td>${p.nama}</td><td>${p.jenisPaket}</td>
+                <td>${nilai.toLocaleString()}</td><td>${masuk.toLocaleString()}</td>
+                <td><input type="number" value="0" min="0" style="width:60px"
+                           oninput="hitungSubtotal(this,${nilai})"></td>
+                <td class="subtotal">Rp 0</td>
+              </tr>`;
               })
               .join('');
             updateTotals();
-            footer.classList.remove('hidden');
+            document.getElementById('calcFooter').classList.remove('hidden');
           })
           .catch((err) => {
             console.error(err);
+            alert('Error ambil data.');
           });
       }
 
       function hitungSubtotal(input, nilai) {
-        const row = input.closest('tr');
-        const qty = Number(input.value) || 0;
-        const sub = qty * nilai;
-        row.querySelector('.subtotal').textContent =
-          'Rp ' + sub.toLocaleString();
+        const sub = (+input.value || 0) * nilai;
+        input.closest('tr').querySelector('.subtotal').textContent =
+          'Rp ' + sub.toLocaleString();
         updateTotals();
       }
-
-      function updateTotals(fixed = undefined) {
+      function updateTotals() {
         let total = 0;
-        document.querySelectorAll('.subtotal').forEach((cell) => {
-          total += Number(cell.textContent.replace(/[^\d]/g, '')) || 0;
+        document.querySelectorAll('.subtotal').forEach((c) => {
+          total += +c.textContent.replace(/[^\d]/g, '') || 0;
         });
-        document.getElementById('grandTotalTable').textContent =
-          'Rp ' + total.toLocaleString();
-        document.getElementById('grandTotalFloating').textContent =
-          'Rp ' + total.toLocaleString();
+        const txt = 'Rp ' + total.toLocaleString();
+        document.getElementById('grandTotalTable').textContent = txt;
+        document.getElementById('grandTotalFloating').textContent = txt;
       }
-
       function resetTabel() {
         document.getElementById('grupInput').value = '';
         document.getElementById('resultBody').innerHTML = '';
         document.getElementById('resultTable').classList.add('hidden');
         document.getElementById('calcFooter').classList.add('hidden');
-        updateTotals(0);
+        updateTotals();
       }
 
+      /* ➤ kirim semua setoran, lalu ubah warna tombol jadi merah */
       function kirimSemuaSetoran() {
-        const sheetName = getSheetName();
         const rows = document.querySelectorAll('#resultBody tr');
-        const tasks = [];
-        rows.forEach((r) => {
-          const id = r.dataset.id;
-          const inp = r.querySelector('input');
-          const jml = Number(inp.value) || 0;
-          if (id && jml > 0) {
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.textContent = 'Memproses…';
+        const tasks = Array.from(rows)
+          .map((r) => {
+            const id = r.dataset.id,
+              j = +r.querySelector('input').value || 0;
+            if (!id || j <= 0) return null;
             const fd = new FormData();
-            fd.append('sheetName', sheetName);
+            fd.append('sheetName', getSheetName());
             fd.append('action', 'addSetoran');
             fd.append('idPeserta', id);
-            fd.append('setoranBaru', jml);
-            tasks.push(fetch(API_URL, { method: 'POST', body: fd }));
-          }
-        });
+            fd.append('setoranBaru', j);
+            fd.append('token', getToken());
+            return fetch(API_URL, { method: 'POST', body: fd });
+          })
+          .filter((x) => x);
         if (!tasks.length) {
           alert('Tidak ada setoran untuk dikirim');
+          btn.disabled = false;
+          btn.textContent = 'Input Semua Setoran';
           return;
         }
         Promise.all(tasks)
-          .then(() => alert('Semua setoran berhasil dikirim!'))
-          .catch((e) => alert('Error: ' + e.message));
+          .then(() => {
+            btn.style.backgroundColor = 'var(--danger)';
+            btn.textContent = 'Terkirim!';
+            alert('✅ Semua setoran berhasil dikirim!');
+          })
+          .catch((e) => {
+            console.error(e);
+            btn.disabled = false;
+            btn.textContent = 'Input Semua Setoran';
+            alert('❌ Error: ' + e.message);
+          });
       }
     </script>
   </body>
