@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Total Uang</title>
+    <title>Rekap Total Uang</title>
     <link rel="stylesheet" href="style.css" />
     <style>
       body {
@@ -16,37 +16,60 @@
         max-width: 400px;
         margin: auto;
       }
-      label,
-      p {
+      label {
         display: block;
-        margin: 0.5rem 0;
+        margin: 1rem 0 0.25rem;
+        font-weight: bold;
       }
       input {
         width: 100%;
         padding: 0.5rem;
-        margin-top: 0.25rem;
         background: #222;
         border: 1px solid #444;
+        border-radius: 4px;
         color: #f0f0f0;
+        font-size: 1rem;
       }
-      button {
+      .btn {
         width: 100%;
         padding: 0.75rem;
-        margin-top: 1rem;
+        margin: 1rem 0;
         background: #28a745;
         color: #fff;
         border: none;
+        border-radius: 4px;
+        font-size: 1rem;
         cursor: pointer;
       }
-      button:hover {
+      .btn:hover {
         background: #218838;
       }
-      .results p {
-        margin: 0.25rem 0;
+      .results {
+        margin: 1.5rem 0;
+        display: grid;
+        gap: 0.75rem;
+      }
+      .card {
+        background: #222;
+        padding: 0.75rem 1rem;
+        border-radius: 6px;
+      }
+      .card h3 {
+        margin: 0;
+        font-size: 1rem;
+        color: #ccc;
+      }
+      .card .amount {
+        margin-top: 0.25rem;
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: #f0f0f0;
       }
       .back {
-        margin-top: 1.5rem;
         background: #007bff;
+      }
+      .back:hover {
+        background: #0069d9;
       }
     </style>
   </head>
@@ -54,25 +77,30 @@
     <div class="container">
       <h2>Rekap Total Uang</h2>
 
-      <!-- Input editable -->
-      <label>
-        Uang Cash (C1):
-        <input type="number" id="cashInput" />
-      </label>
-      <label>
-        Uang di ATM (C2):
-        <input type="number" id="atmInput" />
-      </label>
-      <button id="saveBtn">Simpan Perubahan</button>
+      <label for="cashInput">Uang Cash :</label>
+      <input type="text" id="cashInput" />
 
-      <!-- Tampilkan hasil -->
+      <label for="atmInput">Uang di ATM :</label>
+      <input type="text" id="atmInput" />
+
+      <button id="saveBtn" class="btn">Simpan Perubahan</button>
+
       <div class="results">
-        <p>Total Uang Cash (C3): Rp <span id="totalCash">0</span></p>
-        <p>Total Uang Paket (C4): Rp <span id="totalPaket">0</span></p>
-        <p>Total Uang Admin (C5): Rp <span id="totalAdmin">0</span></p>
+        <div class="card">
+          <h3>Total Uang Cash</h3>
+          <div id="totalCash" class="amount">Rp 0</div>
+        </div>
+        <div class="card">
+          <h3>Total Uang Paket</h3>
+          <div id="totalPaket" class="amount">Rp 0</div>
+        </div>
+        <div class="card">
+          <h3>Total Uang Admin</h3>
+          <div id="totalAdmin" class="amount">Rp 0</div>
+        </div>
       </div>
 
-      <button class="back" onclick="location.href='index.html'">
+      <button onclick="location.href='index.html'" class="btn back">
         ← Kembali
       </button>
     </div>
@@ -99,15 +127,18 @@
         const data = await res.json();
         if (!data.success) {
           localStorage.removeItem('adminToken');
-          alert('Token kadaluarsa');
+          alert('Token kedaluwarsa');
           location.href = 'index.html';
           return false;
         }
         return true;
       }
 
-      function formatRupiah(x) {
-        return Number(x).toLocaleString('id-ID');
+      function formatRupiah(n) {
+        return 'Rp ' + Number(n).toLocaleString('id-ID');
+      }
+      function unformatRupiah(s) {
+        return s.toString().replace(/[^\d]/g, '');
       }
 
       async function loadTotals() {
@@ -115,37 +146,26 @@
         form.append('action', 'getTotalUang');
         form.append('sheetName', 'TOTAL UANG');
         form.append('token', getToken());
-
         const res = await fetch(API_URL, { method: 'POST', body: form });
         const data = await res.json();
         if (data.error) return alert(data.error);
 
-        // isi input dengan C1 & C2
-        document.getElementById('cashInput').value = data.cash ?? 0;
-        document.getElementById('atmInput').value = data.atm ?? 0;
-        // tampilkan C3,C4,C5
-        document.getElementById('totalCash').textContent = formatRupiah(
-          data.totalCash
-        );
-        document.getElementById('totalPaket').textContent = formatRupiah(
-          data.totalPaket
-        );
-        document.getElementById('totalAdmin').textContent = formatRupiah(
-          data.totalAdmin
-        );
+        cashInput.value = formatRupiah(data.cash);
+        atmInput.value = formatRupiah(data.atm);
+        totalCash.textContent = formatRupiah(data.totalCash);
+        totalPaket.textContent = formatRupiah(data.totalPaket);
+        totalAdmin.textContent = formatRupiah(data.totalAdmin);
       }
 
       async function saveCashAtm() {
-        const cash = Number(document.getElementById('cashInput').value) || 0;
-        const atm = Number(document.getElementById('atmInput').value) || 0;
-
+        const cash = Number(unformatRupiah(cashInput.value)) || 0;
+        const atm = Number(unformatRupiah(atmInput.value)) || 0;
         const form = new FormData();
         form.append('action', 'setTotalUang');
         form.append('sheetName', 'TOTAL UANG');
         form.append('cash', cash);
         form.append('atm', atm);
         form.append('token', getToken());
-
         const res = await fetch(API_URL, { method: 'POST', body: form });
         const data = await res.json();
         if (data.success) {
@@ -158,6 +178,18 @@
 
       document.addEventListener('DOMContentLoaded', async () => {
         if (!(await initAuth())) return;
+
+        const cashInput = document.getElementById('cashInput');
+        const atmInput = document.getElementById('atmInput');
+
+        // live-format on each keystroke
+        [cashInput, atmInput].forEach((input) => {
+          input.addEventListener('input', () => {
+            const raw = unformatRupiah(input.value);
+            input.value = formatRupiah(raw);
+          });
+        });
+
         document
           .getElementById('saveBtn')
           .addEventListener('click', saveCashAtm);
