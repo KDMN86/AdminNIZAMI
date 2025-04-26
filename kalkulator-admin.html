@@ -5,69 +5,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kalkulator Admin</title>
     <style>
-      /* 1. Box-sizing reset */
+      /* reset & vars */
       *,
       *::before,
       *::after {
         box-sizing: border-box;
       }
-
-      /* 2. CSS variables */
       :root {
         --bg: #101010;
         --fg: #f0f0f0;
         --primary: #007bff;
-        --success: #28a745;
-        --success-dark: #218838;
-        --danger: #dc3545;
-        --danger-dark: #c82333;
         --input-bg: #222;
-        --border-color: #444;
-        --transition-speed: 0.2s;
-        --footer-height: 60px;
-        --reset: #bf9106;
-        --reset-dark: #86600a;
+        --border: #444;
+        --transition: 0.2s;
+        --success: #28a745;
+        --danger: #dc3545;
       }
-
       body {
         margin: 0;
         padding: 1rem;
         font-family: 'Poppins', sans-serif;
-        background-color: var(--bg);
+        background: var(--bg);
         color: var(--fg);
       }
-
       h2 {
         text-align: center;
         margin-bottom: 1rem;
-        font-size: 1.5rem;
+        font-size: 1.75rem;
       }
 
-      label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: bold;
+      /* Dropdown */
+      .dropdown {
+        position: relative;
+        margin-bottom: 1rem;
       }
-
-      #sheetSelector {
+      .dropdown-toggle {
         width: 100%;
         padding: 0.75rem 1rem;
-        font-size: 1rem;
-        border: 1px solid var(--border-color);
-        border-radius: 5px;
-        background: var(--input-bg)
-          url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><polygon points='0,4 6,10 12,4' fill='%23f0f0f0'/></svg>")
-          no-repeat right 1rem center;
+        background: var(--input-bg);
         color: var(--fg);
-        appearance: none;
-        margin-bottom: 1rem;
-        transition: border-color var(--transition-speed);
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        cursor: pointer;
+        user-select: none;
+        transition: border-color var(--transition);
       }
-      #sheetSelector:focus {
+      .dropdown-toggle:hover {
         border-color: var(--primary);
-        outline: none;
+      }
+      .dropdown-toggle::after {
+        content: '▾';
+        float: right;
+      }
+      .dropdown-menu {
+        position: absolute;
+        top: calc(100% + 2px);
+        left: 0;
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+        background: var(--input-bg);
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 10;
+      }
+      .dropdown-menu.show {
+        display: block;
+      }
+      .dropdown-menu label {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+      }
+      .dropdown-menu input {
+        margin-right: 0.5rem;
       }
 
+      /* Input group */
       .input-group {
         display: flex;
         flex-wrap: wrap;
@@ -82,110 +99,114 @@
         font-size: 1rem;
         background-color: var(--input-bg);
         color: var(--fg);
-        border: 1px solid var(--border-color);
+        border: 1px solid var(--border);
         border-radius: 6px;
-        transition: background-color var(--transition-speed);
+        transition: background-color var(--transition);
       }
       .input-group input:focus,
       .input-group button:focus {
-        outline: 2px solid #55aaff;
+        outline: 2px solid var(--primary);
         outline-offset: 2px;
       }
       .input-group button {
         cursor: pointer;
+        background: var(--primary);
+        color: white;
       }
       .input-group button:hover {
-        background-color: #333;
+        background: #0056b3;
       }
 
-      /* reset-button khusus */
-      .reset-button {
-        background-color: var(--reset);
-        color: #f52727;
-      }
-      .reset-button:hover {
-        background-color: var(--reset-dark);
-      }
-
+      /* Table */
       .table-container {
         overflow-x: auto;
-        margin-bottom: calc(
-          env(safe-area-inset-bottom, 0px) + var(--footer-height)
-        );
+        margin-bottom: 100px;
       }
       table {
         width: 100%;
         border-collapse: collapse;
         margin-top: 0.5rem;
+        min-width: 600px;
       }
       th,
       td {
         border: 1px solid #555;
         padding: 0.5rem;
         text-align: center;
+        font-size: 0.85rem;
         color: var(--fg);
-        font-size: 0.9rem;
       }
       th {
-        background-color: var(--primary);
+        background: var(--primary);
         color: #fff;
       }
       tfoot td {
+        background: #333;
         font-weight: bold;
-        background-color: #333;
         color: #fff;
       }
-      .hidden {
-        display: none;
-      }
 
+      /* Footer */
       .footer-floating {
         position: fixed;
         bottom: 0;
         left: 0;
         width: 100%;
-        height: var(--footer-height);
+        height: 70px;
         background: rgba(17, 17, 17, 0.95);
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 0 1rem;
         box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
-        z-index: 1000;
-        transition: transform var(--transition-speed);
+        z-index: 20;
       }
       .footer-floating .total {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
         font-weight: bold;
       }
       .footer-floating button {
-        background-color: var(--success);
+        background: var(--success);
         color: white;
-        font-weight: bold;
         padding: 0.75rem 1.5rem;
         border: none;
         border-radius: 6px;
         cursor: pointer;
-        transition: background-color var(--transition-speed);
+        transition: background var(--transition);
       }
       .footer-floating button:hover {
-        background-color: var(--success-dark);
+        background: #218838;
       }
 
-      @media screen and (max-width: 600px) {
-        th,
-        td {
-          font-size: 0.8rem;
-          padding: 0.4rem;
+      /* Responsiveness */
+      @media (max-width: 600px) {
+        h2 {
+          font-size: 1.5rem;
         }
         .input-group {
           flex-direction: column;
-          align-items: stretch;
+          gap: 0.75rem;
         }
-        .input-group input,
-        .input-group button,
-        #sheetSelector {
+        table {
+          min-width: 100%;
+          font-size: 0.75rem;
+        }
+        th,
+        td {
+          padding: 0.4rem;
+        }
+        .footer-floating {
+          flex-direction: column;
+          height: auto;
+          padding: 0.5rem;
+          gap: 0.5rem;
+        }
+        .footer-floating .total {
+          font-size: 1rem;
+        }
+        .footer-floating button {
           width: 100%;
+          padding: 0.6rem;
         }
       }
     </style>
@@ -193,17 +214,19 @@
   <body>
     <h2>Tambah Setoran</h2>
 
-    <label for="sheetSelector">Pilih Sheet:</label>
-    <select id="sheetSelector">
-      <option value="IBU">IBU</option>
-      <option value="MINGGUAN">MINGGUAN</option>
-      <option value="FUJI">FUJI</option>
-      <option value="SAMSUL">SAMSUL</option>
-      <option value="DELI">DELI</option>
-    </select>
+    <!-- custom dropdown multi-select -->
+    <div class="dropdown" id="sheetDropdown">
+      <div class="dropdown-toggle" id="toggleSheets">Pilih Sheet…</div>
+      <div class="dropdown-menu" id="menuSheets">
+        <label><input type="checkbox" value="IBU" /> IBU</label>
+        <label><input type="checkbox" value="MINGGUAN" /> MINGGUAN</label>
+        <label><input type="checkbox" value="FUJI" /> FUJI</label>
+        <label><input type="checkbox" value="SAMSUL" /> SAMSUL</label>
+        <label><input type="checkbox" value="DELI" /> DELI</label>
+      </div>
+    </div>
 
     <div class="input-group">
-      <!-- tambahkan list="groupList" -->
       <input
         type="text"
         id="grupInput"
@@ -212,7 +235,7 @@
       />
       <datalist id="groupList"></datalist>
       <button onclick="cariGrup()">Cek Data</button>
-      <button class="reset-button" onclick="resetTabel()">Reset</button>
+      <button onclick="resetTabel()">Reset</button>
     </div>
 
     <div class="table-container">
@@ -247,137 +270,142 @@
 
     <script>
       const API_URL =
-        'https://script.google.com/macros/s/AKfycbw6VZbM88dWJ_oQfLaEIsrIL_YqOgg-a0vhF4j7vnwaeNtvI2hMyyL4v3JimDre5gVe/exec';
+        'https://script.google.com/macros/s/AKfycbwR6qYRXsYZix5NoZqMtjkMvvaDO5IN26FKMG63qxDSwaSe25LRXQjjMnPgfvI8gUVD/exec';
 
-      document.addEventListener('DOMContentLoaded', async () => {
-        if (!(await initAuth())) return;
-        loadGroupIds(); // ← fetch datalist segera setelah autentikasi
+      // — Multi-sheet dropdown logic —
+      const toggle = document.getElementById('toggleSheets');
+      const menu = document.getElementById('menuSheets');
+      const checks = menu.querySelectorAll('input[type=checkbox]');
+
+      toggle.addEventListener('click', () => menu.classList.toggle('show'));
+      document.addEventListener('click', (e) => {
+        if (!document.getElementById('sheetDropdown').contains(e.target)) {
+          menu.classList.remove('show');
+        }
       });
 
-      function getSheetName() {
-        return document.getElementById('sheetSelector').value;
+      function getSheetNames() {
+        return Array.from(checks)
+          .filter((c) => c.checked)
+          .map((c) => c.value);
       }
+      checks.forEach((c) =>
+        c.addEventListener('change', () => {
+          const sel = getSheetNames();
+          toggle.textContent = sel.length
+            ? 'Sheet: ' + sel.join(', ')
+            : 'Pilih Sheet…';
+          loadGroupIds();
+        })
+      );
+
+      // — Auth helpers —
       function getToken() {
         return localStorage.getItem('adminToken') || '';
       }
-
-      /* ➤ autentikasi admin (tidak berubah) */
       async function initAuth() {
         const token = getToken();
-        if (!token) {
-          redirectLogin();
-          return false;
-        }
-        const form = new FormData();
-        form.append('action', 'verifyAdmin');
-        form.append('token', token);
+        if (!token) return redirectLogin();
+        const f = new FormData();
+        f.append('action', 'verifyAdmin');
+        f.append('token', token);
         try {
-          const res = await fetch(API_URL, { method: 'POST', body: form });
-          const data = await res.json();
-          if (!data.success) {
-            redirectLogin();
-            return false;
-          }
+          const d = await (
+            await fetch(API_URL, { method: 'POST', body: f })
+          ).json();
+          if (!d.success) return redirectLogin();
           return true;
         } catch {
-          redirectLogin();
-          return false;
+          return redirectLogin();
         }
       }
       function redirectLogin() {
         localStorage.removeItem('adminToken');
         alert('🔒 Token tidak valid. Silakan login ulang.');
-        window.location.href = 'index.html';
+        location.href = 'index.html';
       }
 
-      /* ➤ AUTOCOMPLETE: load daftar Grup ID dari kolom I via API */
+      // — Load Group ID autocomplete —
       async function loadGroupIds() {
-        const form = new FormData();
-        form.append('action', 'getGroupIds');
-        form.append('sheetName', getSheetName());
-        form.append('token', getToken());
+        const sheets = getSheetNames().join(',');
+        const f = new FormData();
+        f.append('action', 'getGroupIds');
+        f.append('sheetNames', sheets);
+        f.append('token', getToken());
         try {
-          const res = await fetch(API_URL, { method: 'POST', body: form });
-          const list = await res.json(); // e.g. ["G1","G2",…]
+          const list = await (
+            await fetch(API_URL, { method: 'POST', body: f })
+          ).json();
           const dl = document.getElementById('groupList');
           dl.innerHTML = '';
           list.forEach((id) => {
-            const opt = document.createElement('option');
-            opt.value = id;
-            dl.appendChild(opt);
+            const o = document.createElement('option');
+            o.value = id;
+            dl.appendChild(o);
           });
-        } catch (err) {
-          console.error('Gagal load grup IDs', err);
+        } catch (e) {
+          console.error('Gagal load grup IDs', e);
         }
       }
 
-      /* panggil saat sheet berubah atau input difokus */
-      document
-        .getElementById('sheetSelector')
-        .addEventListener('change', loadGroupIds);
-      document
-        .getElementById('grupInput')
-        .addEventListener('focus', loadGroupIds);
-
-      /* ➤ pencarian dan render tabel (sama seperti sebelumnya) */
-      function cariGrup() {
-        const grupID = document.getElementById('grupInput').value.trim();
-        if (!grupID) {
-          alert('Masukkan Grup ID!');
-          return;
-        }
+      // — Fetch and render participants by group —
+      async function cariGrup() {
+        const grup = document.getElementById('grupInput').value.trim();
+        if (!grup) return alert('Masukkan Grup ID!');
         const tbody = document.getElementById('resultBody');
         document.getElementById('resultTable').classList.remove('hidden');
         document.getElementById('calcFooter').classList.add('hidden');
         tbody.innerHTML = '<tr><td colspan="7">Loading…</td></tr>';
-        fetch(
-          `${API_URL}?sheetName=${getSheetName()}&group=${encodeURIComponent(
-            grupID
-          )}`
-        )
-          .then((r) => r.json())
-          .then((data) => {
-            if (data.error || !data.length) {
-              tbody.innerHTML = `<tr><td colspan="7" style="color:red;">${
-                data.error || 'Data tidak ditemukan'
-              }</td></tr>`;
-              updateTotals();
-              return;
-            }
-            tbody.innerHTML = data
-              .map((p) => {
-                const nilai = +p.nilaiSetoran || 0,
-                  masuk = +p.setoranDilakukan || 0;
-                return `<tr data-id="${p.idPeserta}">
-                <td>${p.no}</td><td>${p.nama}</td><td>${p.jenisPaket}</td>
-                <td>${nilai.toLocaleString()}</td><td>${masuk.toLocaleString()}</td>
-                <td><input type="number" value="0" min="0" style="width:60px"
-                           oninput="hitungSubtotal(this,${nilai})"></td>
-                <td class="subtotal">Rp 0</td>
-              </tr>`;
-              })
-              .join('');
+
+        const f = new FormData();
+        f.append('action', 'getByGroup');
+        f.append('sheetNames', getSheetNames().join(','));
+        f.append('group', grup);
+        f.append('token', getToken());
+
+        try {
+          const data = await (
+            await fetch(API_URL, { method: 'POST', body: f })
+          ).json();
+          if (data.error || !data.length) {
+            tbody.innerHTML = `<tr><td colspan="7" style="color:red;">${
+              data.error || 'Data tidak ditemukan'
+            }</td></tr>`;
             updateTotals();
-            document.getElementById('calcFooter').classList.remove('hidden');
-          })
-          .catch((err) => {
-            console.error(err);
-            alert('Error ambil data.');
-          });
+            return;
+          }
+          tbody.innerHTML = data
+            .map((p) => {
+              const n = +p.nilaiSetoran || 0,
+                m = +p.setoranDilakukan || 0;
+              return `<tr data-id="${p.idPeserta}">
+              <td>${p.no}</td><td>${p.nama}</td><td>${p.jenisPaket}</td>
+              <td>${n.toLocaleString()}</td><td>${m.toLocaleString()}</td>
+              <td><input type="number" value="0" min="0" style="width:60px" oninput="hitungSubtotal(this,${n})"></td>
+              <td class="subtotal">Rp 0</td>
+            </tr>`;
+            })
+            .join('');
+          updateTotals();
+          document.getElementById('calcFooter').classList.remove('hidden');
+        } catch (e) {
+          console.error(e);
+          alert('Error ambil data.');
+        }
       }
 
-      function hitungSubtotal(input, nilai) {
-        const sub = (+input.value || 0) * nilai;
+      function hitungSubtotal(input, val) {
+        const sub = (+input.value || 0) * val;
         input.closest('tr').querySelector('.subtotal').textContent =
           'Rp ' + sub.toLocaleString();
         updateTotals();
       }
       function updateTotals() {
-        let total = 0;
-        document.querySelectorAll('.subtotal').forEach((c) => {
-          total += +c.textContent.replace(/[^\d]/g, '') || 0;
-        });
-        const txt = 'Rp ' + total.toLocaleString();
+        let t = 0;
+        document
+          .querySelectorAll('.subtotal')
+          .forEach((c) => (t += +c.textContent.replace(/[^\d]/g, '') || 0));
+        const txt = 'Rp ' + t.toLocaleString();
         document.getElementById('grandTotalTable').textContent = txt;
         document.getElementById('grandTotalFloating').textContent = txt;
       }
@@ -389,45 +417,54 @@
         updateTotals();
       }
 
-      /* ➤ kirim semua setoran, lalu ubah warna tombol jadi merah */
-      function kirimSemuaSetoran() {
+      // — Submit all deposits to Apps Script as addSetoranMulti —
+      async function kirimSemuaSetoran() {
         const rows = document.querySelectorAll('#resultBody tr');
         const btn = document.getElementById('submitBtn');
         btn.disabled = true;
         btn.textContent = 'Memproses…';
+
+        const sheetNames = getSheetNames().join(',');
         const tasks = Array.from(rows)
           .map((r) => {
             const id = r.dataset.id,
               j = +r.querySelector('input').value || 0;
             if (!id || j <= 0) return null;
-            const fd = new FormData();
-            fd.append('sheetName', getSheetName());
-            fd.append('action', 'addSetoran');
-            fd.append('idPeserta', id);
-            fd.append('setoranBaru', j);
-            fd.append('token', getToken());
-            return fetch(API_URL, { method: 'POST', body: fd });
+            const f = new FormData();
+            f.append('action', 'addSetoranMulti');
+            f.append('sheetNames', sheetNames);
+            f.append('idPeserta', id);
+            f.append('setoranBaru', j);
+            f.append('token', getToken());
+            return fetch(API_URL, { method: 'POST', body: f });
           })
           .filter((x) => x);
+
         if (!tasks.length) {
           alert('Tidak ada setoran untuk dikirim');
           btn.disabled = false;
           btn.textContent = 'Input Semua Setoran';
           return;
         }
-        Promise.all(tasks)
-          .then(() => {
-            btn.style.backgroundColor = 'var(--danger)';
-            btn.textContent = 'Terkirim!';
-            alert('✅ Semua setoran berhasil dikirim!');
-          })
-          .catch((e) => {
-            console.error(e);
-            btn.disabled = false;
-            btn.textContent = 'Input Semua Setoran';
-            alert('❌ Error: ' + e.message);
-          });
+
+        try {
+          await Promise.all(tasks);
+          btn.style.backgroundColor = 'var(--danger)';
+          btn.textContent = 'Terkirim!';
+          alert('✅ Semua setoran berhasil dikirim!');
+        } catch (e) {
+          console.error(e);
+          btn.disabled = false;
+          btn.textContent = 'Input Semua Setoran';
+          alert('❌ Error: ' + e.message);
+        }
       }
+
+      // — Initialize on load —
+      document.addEventListener('DOMContentLoaded', async () => {
+        if (!(await initAuth())) return;
+        loadGroupIds();
+      });
     </script>
   </body>
 </html>
