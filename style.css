@@ -280,18 +280,17 @@ button:hover {
 }
 
 #btnClose {
-  color: #f51f1f;
+  color: #ffffff;
   margin-left: auto;
-  /* width: 30px; */
   height: 40px;
   font-size: 20px;
   line-height: 1;
   cursor: pointer;
-  background: #28a745;
+  background: #fc0202;
   border: none;
   border-radius: 5px;
 }
 #btnClose:hover {
-  background: rgb(255, 25, 0);
-  color: #fffcfc;
+  background: rgb(255, 255, 255);
+  color: #fe0000;
 }
