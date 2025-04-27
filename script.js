@@ -711,21 +711,4 @@ function closeAdmin() {
   document.getElementById('loginContainer').classList.remove('hidden');
 }
 
-// modifikasi login handler agar token di-set dan panel muncul
-document.getElementById('btnLogin').addEventListener('click', async () => {
-  const pwd = document.getElementById('adminPassword').value;
-  // panggil API verifyAdmin dengan password
-  const f = new FormData();
-  f.append('action', 'verifyAdmin');
-  f.append('password', pwd);
-  const res = await fetch(API_URL, { method: 'POST', body: f });
-  const d = await res.json();
-  if (d.success && d.token) {
-    localStorage.setItem('adminToken', d.token);
-    document.getElementById('loginContainer').classList.add('hidden');
-    document.getElementById('adminPanel').classList.remove('hidden');
-    initAuth(); // panggil ulang inisialisasi jika perlu
-  } else {
-    document.getElementById('loginError').classList.remove('hidden');
-  }
-});
+
