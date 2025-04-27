@@ -278,3 +278,20 @@ button:hover {
 .package-button:hover {
   background-color: #0056b3;
 }
+
+#btnClose {
+  color: #f51f1f;
+  margin-left: auto;
+  /* width: 30px; */
+  height: 40px;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  background: #28a745;
+  border: none;
+  border-radius: 5px;
+}
+#btnClose:hover {
+  background: rgb(255, 25, 0);
+  color: #fffcfc;
+}
