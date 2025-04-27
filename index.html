@@ -37,16 +37,6 @@
         Total Uang
       </button>
 
-      <!-- 2️⃣ Pilih Sheet -->
-      <label for="sheetSelector">Pilih Sheet:</label>
-      <select id="sheetSelector">
-        <option value="IBU">IBU</option>
-        <option value="MINGGUAN">MINGGUAN</option>
-        <option value="FUJI">FUJI</option>
-        <option value="SAMSUL">SAMSUL</option>
-        <option value="DELI">DELI</option>
-      </select>
-
       <!-- 3️⃣ Tabs -->
       <div class="tab-buttons">
         <button onclick="location.href='kalkulator-admin.html'">
@@ -68,6 +58,15 @@
 
       <!-- 5️⃣ Form Tambah Peserta (default hidden) -->
       <div id="formPeserta" class="form-container hidden">
+        <!-- 2️⃣ Pilih Sheet -->
+        <label for="sheetSelector">Pilih Sheet:</label>
+        <select id="sheetSelector">
+          <option value="IBU">IBU</option>
+          <option value="MINGGUAN">MINGGUAN</option>
+          <option value="FUJI">FUJI</option>
+          <option value="SAMSUL">SAMSUL</option>
+          <option value="DELI">DELI</option>
+        </select>
         <h3>Tambah Peserta Baru</h3>
         <input type="text" id="idPesertaBaru" placeholder="ID Peserta" />
         <input type="text" id="namaPeserta" placeholder="Nama" />
