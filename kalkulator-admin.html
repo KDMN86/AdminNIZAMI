@@ -209,9 +209,18 @@
           padding: 0.6rem;
         }
       }
+      #currentDate {
+        font-size: 1rem;
+        color: var(--fg);
+        opacity: 0.75;
+        text-align: center;
+        margin-bottom: 0.5rem;
+        font-style: italic;
+      }
     </style>
   </head>
   <body>
+    <div id="currentDate"></div>
     <h2>Tambah Setoran</h2>
 
     <!-- custom dropdown multi-select -->
@@ -270,7 +279,7 @@
 
     <script>
       const API_URL =
-        'https://script.google.com/macros/s/AKfycbwR6qYRXsYZix5NoZqMtjkMvvaDO5IN26FKMG63qxDSwaSe25LRXQjjMnPgfvI8gUVD/exec';
+        'https://script.google.com/macros/s/AKfycbz5ngg1M4aW2RjYLgcwm5lYXGealgaih-1rd7rCoQJv_bamrudmsJkAWLEcBUk2BzOF/exec';
 
       // — Multi-sheet dropdown logic —
       const toggle = document.getElementById('toggleSheets');
@@ -463,6 +472,22 @@
       // — Initialize on load —
       document.addEventListener('DOMContentLoaded', async () => {
         if (!(await initAuth())) return;
+        loadGroupIds();
+      });
+
+      function formatDate(d) {
+        const dd = String(d.getDate()).padStart(2, '0');
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const yy = d.getFullYear();
+        return dd + '/' + mm + '/' + yy;
+      }
+      function showCurrentDate() {
+        const el = document.getElementById('currentDate');
+        if (el) el.textContent = 'Tanggal: ' + formatDate(new Date());
+      }
+      document.addEventListener('DOMContentLoaded', async () => {
+        if (!(await initAuth())) return;
+        showCurrentDate();
         loadGroupIds();
       });
     </script>
