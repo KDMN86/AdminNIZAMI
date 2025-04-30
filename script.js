@@ -1,5 +1,5 @@
 const scriptURL =
-  'https://script.google.com/macros/s/AKfycbz5ngg1M4aW2RjYLgcwm5lYXGealgaih-1rd7rCoQJv_bamrudmsJkAWLEcBUk2BzOF/exec';
+  'https://script.google.com/macros/s/AKfycbzfK5eY9V5zlv2UmJLG-ybn5C2ncqaMpeQcbi0QSBur9RzkOHV9Gu3kCRe3J8gRUde_/exec';
 const API_URL = scriptURL;
 
 // Tombol Login diklik
