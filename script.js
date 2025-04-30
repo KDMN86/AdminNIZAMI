@@ -1,5 +1,5 @@
 const scriptURL =
-  'https://script.google.com/macros/s/AKfycbw6VZbM88dWJ_oQfLaEIsrIL_YqOgg-a0vhF4j7vnwaeNtvI2hMyyL4v3JimDre5gVe/exec';
+  'https://script.google.com/macros/s/AKfycbz5ngg1M4aW2RjYLgcwm5lYXGealgaih-1rd7rCoQJv_bamrudmsJkAWLEcBUk2BzOF/exec';
 const API_URL = scriptURL;
 
 // Tombol Login diklik
@@ -618,20 +618,16 @@ function tambahPeserta() {
   const totalSetoran = document.getElementById('totalSetoran').value.trim();
   const grupID = document.getElementById('grupID').value.trim();
 
-  // 1) Validasi input
   if (!idPeserta || !nama || !jenisPaket || !totalSetoran || !grupID) {
     alert('❌ Semua field harus diisi!');
     return;
   }
-
-  // 2) Ambil token yang disimpan waktu login
   const token = localStorage.getItem('adminToken');
   if (!token) {
     alert('⚠️ Anda belum login atau session telah berakhir.');
     return;
   }
 
-  // 3) Siapkan FormData
   const formData = new FormData();
   formData.append('token', token);
   formData.append('sheetName', sheetName);
@@ -647,7 +643,6 @@ function tambahPeserta() {
     document.getElementById('setoranBarang').value.trim()
   );
 
-  // 4) Kirim ke Apps Script
   fetch(scriptURL, {
     method: 'POST',
     body: formData,
@@ -656,11 +651,9 @@ function tambahPeserta() {
     .then((data) => {
       if (data.success) {
         alert('✅ ' + data.success);
-        // reset hanya form peserta
-        resetForm('peserta');
       } else if (data.error === 'Unauthorized') {
         alert('⚠️ Token tidak valid. Silakan login ulang.');
-        // bisa arahkan ke halaman login
+        // misal: window.location.href = 'index.html';
       } else {
         alert('❌ ' + (data.error || 'Gagal menambahkan peserta'));
       }
@@ -710,5 +703,3 @@ function closeAdmin() {
   document.getElementById('adminPanel').classList.add('hidden');
   document.getElementById('loginContainer').classList.remove('hidden');
 }
-
-
