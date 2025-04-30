@@ -107,7 +107,10 @@
 
     <script>
       const API_URL =
-        'https://script.google.com/macros/s/AKfycbzPIiNLyxKZZkHJbpppTjM3OPu3UjtoUinFpkNiYree1Mc3kSJ-23rnhleP9F67MIjW/exec';
+        'https://script.google.com/macros/s/AKfycbz5ngg1M4aW2RjYLgcwm5lYXGealgaih-1rd7rCoQJv_bamrudmsJkAWLEcBUk2BzOF/exec';
+
+      // ambil elemen globally
+      let cashInput, atmInput, totalCash, totalPaket, totalAdmin;
 
       function getToken() {
         return localStorage.getItem('adminToken') || '';
@@ -142,13 +145,24 @@
       }
 
       async function loadTotals() {
+        // ambil ulang elemen jika belum di-init
+        if (!cashInput) cashInput = document.getElementById('cashInput');
+        if (!atmInput) atmInput = document.getElementById('atmInput');
+        if (!totalCash) totalCash = document.getElementById('totalCash');
+        if (!totalPaket) totalPaket = document.getElementById('totalPaket');
+        if (!totalAdmin) totalAdmin = document.getElementById('totalAdmin');
+
         const form = new FormData();
         form.append('action', 'getTotalUang');
         form.append('sheetName', 'TOTAL UANG');
         form.append('token', getToken());
+
         const res = await fetch(API_URL, { method: 'POST', body: form });
         const data = await res.json();
-        if (data.error) return alert(data.error);
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
 
         cashInput.value = formatRupiah(data.cash);
         atmInput.value = formatRupiah(data.atm);
@@ -160,12 +174,14 @@
       async function saveCashAtm() {
         const cash = Number(unformatRupiah(cashInput.value)) || 0;
         const atm = Number(unformatRupiah(atmInput.value)) || 0;
+
         const form = new FormData();
         form.append('action', 'setTotalUang');
         form.append('sheetName', 'TOTAL UANG');
         form.append('cash', cash);
         form.append('atm', atm);
         form.append('token', getToken());
+
         const res = await fetch(API_URL, { method: 'POST', body: form });
         const data = await res.json();
         if (data.success) {
@@ -179,10 +195,14 @@
       document.addEventListener('DOMContentLoaded', async () => {
         if (!(await initAuth())) return;
 
-        const cashInput = document.getElementById('cashInput');
-        const atmInput = document.getElementById('atmInput');
+        // now safe to grab elements
+        cashInput = document.getElementById('cashInput');
+        atmInput = document.getElementById('atmInput');
+        totalCash = document.getElementById('totalCash');
+        totalPaket = document.getElementById('totalPaket');
+        totalAdmin = document.getElementById('totalAdmin');
 
-        // live-format on each keystroke
+        // live-format on input
         [cashInput, atmInput].forEach((input) => {
           input.addEventListener('input', () => {
             const raw = unformatRupiah(input.value);
@@ -193,6 +213,7 @@
         document
           .getElementById('saveBtn')
           .addEventListener('click', saveCashAtm);
+
         loadTotals();
       });
     </script>
