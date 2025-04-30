@@ -1,5 +1,5 @@
 const API_URL =
-  'https://script.google.com/macros/s/AKfycbw6VZbM88dWJ_oQfLaEIsrIL_YqOgg-a0vhF4j7vnwaeNtvI2hMyyL4v3JimDre5gVe/exec';
+  'https://script.google.com/macros/s/AKfycbz5ngg1M4aW2RjYLgcwm5lYXGealgaih-1rd7rCoQJv_bamrudmsJkAWLEcBUk2BzOF/exec';
 
 // Ambil token dari localStorage
 function getToken() {
