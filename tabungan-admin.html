@@ -4,39 +4,365 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Tabungan</title>
-    <link rel="stylesheet" href="style.css" />
+    <style>
+      /* ===== Variables & reset ===== */
+      :root {
+        --bg: #121212;
+        --card: #1e1e1e;
+        --fg: #e0e0e0;
+        --primary: #2979ff;
+        --primary-dark: #1565c0;
+        --success: #00c853;
+        --danger: #d50000;
+        --border: #333;
+        --transition: 0.3s;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        background: var(--bg);
+        color: var(--fg);
+      }
+      .container {
+        max-width: 600px;
+        margin: 2rem auto;
+        background: var(--card);
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+      }
+      h2 {
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+      hr {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 1.5rem 0;
+      }
+
+      /* ===== Buttons ===== */
+      button {
+        cursor: pointer;
+        transition: background var(--transition);
+      }
+      .button-row {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      .button-row button {
+        flex: 1;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 6px;
+        background: var(--primary);
+        color: #fff;
+      }
+      .button-row .btn-secondary {
+        background: var(--danger);
+      }
+      .button-row button:hover {
+        opacity: 0.9;
+      }
+
+      /* ===== Forms ===== */
+      .form-section {
+        margin-bottom: 1.5rem;
+      }
+      .form-section h3 {
+        color: var(--primary);
+        margin-bottom: 0.75rem;
+        border-left: 4px solid var(--primary);
+        padding-left: 0.5rem;
+      }
+      .form-section input {
+        width: 100%;
+        padding: 0.5rem;
+        margin-bottom: 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        background: var(--bg);
+        color: var(--fg);
+      }
+      .form-section button {
+        width: 100%;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 6px;
+        background: var(--primary);
+        color: #fff;
+      }
+      .form-section button:hover {
+        background: var(--primary-dark);
+      }
+
+      /* ===== Input-group (cek saldo) ===== */
+      .input-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-items: center;
+      }
+      .input-group input {
+        flex: 1;
+        padding: 0.5rem;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        background: var(--bg);
+        color: var(--fg);
+      }
+      .input-group button {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 6px;
+        background: var(--primary);
+        color: #fff;
+      }
+      .input-group button:hover {
+        background: var(--primary-dark);
+      }
+      #saldoDisplay {
+        font-weight: bold;
+        color: var(--success);
+        white-space: nowrap;
+      }
+
+      /* ===== Table histori ===== */
+      .table-container {
+        margin-top: 1.5rem;
+        overflow-x: auto;
+      }
+      #historyTable {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      #historyTable th,
+      #historyTable td {
+        border: 1px solid var(--border);
+        padding: 0.5rem;
+        text-align: center;
+      }
+      #historyTable th {
+        background: var(--primary);
+        color: #fff;
+      }
+      #historyTable tbody tr:nth-child(even) {
+        background: var(--card);
+      }
+
+      /* ===== Responsive ===== */
+      @media (max-width: 480px) {
+        .button-row,
+        .input-group {
+          flex-direction: column;
+        }
+      }
+    </style>
   </head>
   <body>
     <div class="container">
       <h2>Admin Tabungan</h2>
 
-      <button onclick="location.href='index.html'" style="margin-bottom: 20px">
-        ← Kembali ke Admin Utama
-      </button>
+      <div class="button-row">
+        <button onclick="location.href='index.html'">← Admin Utama</button>
+        <button class="btn-secondary" onclick="resetAllForms()">
+          Reset Form
+        </button>
+      </div>
 
-      <!-- Form Tambah Peserta Tabungan -->
+      <!-- Tambah Peserta -->
       <div class="form-section">
         <h3>Tambah Peserta Tabungan</h3>
-        <input type="text" id="idTabunganBaru" placeholder="ID Peserta" />
-        <input type="text" id="namaTabunganBaru" placeholder="Nama Peserta" />
+        <input id="idTabunganBaru" placeholder="ID Peserta" />
+        <input id="namaTabunganBaru" placeholder="Nama Peserta" />
         <button onclick="tambahPesertaTabungan()">Tambah Peserta</button>
       </div>
 
-      <hr style="margin: 20px 0" />
+      <hr />
 
-      <!-- Form Input Tabungan -->
+      <!-- Input Tabungan -->
       <div class="form-section">
         <h3>Input Tabungan Peserta</h3>
-        <input type="text" id="idTabunganSetor" placeholder="ID Peserta" />
+        <input id="idTabunganInput" placeholder="ID Peserta" />
         <input
-          type="number"
           id="jumlahTabungan"
+          type="number"
           placeholder="Jumlah Tabungan (Rp)"
         />
         <button onclick="inputTabunganPeserta()">Input Tabungan</button>
       </div>
+
+      <!-- Cek Saldo -->
+      <div class="input-group">
+        <input id="idTabunganSaldo" placeholder="ID untuk Cek Saldo" />
+        <button onclick="cekSaldo()">Cek Saldo</button>
+        <span id="saldoDisplay">Saldo: Rp 0</span>
+      </div>
+
+      <!-- Tabel Histori -->
+      <div class="table-container hidden" id="historyContainer">
+        <h3>Histori Tabungan</h3>
+        <table id="historyTable">
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th>Jumlah (Rp)</th>
+              <!-- <th>Keterangan</th> -->
+              <!-- <th>Saldo (Rp)</th> -->
+            </tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
     </div>
 
-    <script src="tabungan-admin.js"></script>
+    <script>
+      const API_URL =
+        'https://script.google.com/macros/s/AKfycbzfK5eY9V5zlv2UmJLG-ybn5C2ncqaMpeQcbi0QSBur9RzkOHV9Gu3kCRe3J8gRUde_/exec';
+
+      function getToken() {
+        return localStorage.getItem('adminToken') || '';
+      }
+      async function initAuth() {
+        const token = getToken();
+        if (!token) {
+          alert('🔒 Login dahulu');
+          location = 'index.html';
+          return false;
+        }
+        const f = new FormData();
+        f.append('action', 'verifyAdmin');
+        f.append('token', token);
+        try {
+          let d = await (
+            await fetch(API_URL, { method: 'POST', body: f })
+          ).json();
+          if (!d.success) throw '';
+          return true;
+        } catch {
+          localStorage.removeItem('adminToken');
+          alert('🔒 Token tidak sah');
+          location = 'index.html';
+        }
+      }
+
+      async function tambahPesertaTabungan() {
+        const id = idTabunganBaru.value.trim(),
+          nama = namaTabunganBaru.value.trim();
+        if (!id || !nama) {
+          alert('Isi ID & Nama!');
+          return;
+        }
+        const f = new FormData();
+        f.append('sheetName', 'TABUNGAN');
+        f.append('action', 'addTabunganParticipant');
+        f.append('idPeserta', id);
+        f.append('nama', nama);
+        f.append('token', getToken());
+        let d = await (
+          await fetch(API_URL, { method: 'POST', body: f })
+        ).json();
+        if (d.success) {
+          alert('✅ ' + d.success);
+          resetAllForms();
+        } else alert('❌ ' + (d.error || 'Gagal'));
+      }
+
+      async function inputTabunganPeserta() {
+        const id = idTabunganInput.value.trim(),
+          j = jumlahTabungan.value.trim();
+        if (!id || !j || Number(j) <= 0) {
+          alert('ID & jumlah valid!');
+          return;
+        }
+        const f = new FormData();
+        f.append('sheetName', 'TABUNGAN');
+        f.append('action', 'addTabunganEntry');
+        f.append('idPeserta', id);
+        f.append('jumlahTabungan', j);
+        f.append('token', getToken());
+        let d = await (
+          await fetch(API_URL, { method: 'POST', body: f })
+        ).json();
+        if (d.success) {
+          // ambil saldo terbaru via getTabungan
+          const res = await fetch(API_URL, {
+            method: 'POST',
+            body: (() => {
+              let q = new FormData();
+              q.append('action', 'getTabungan');
+              q.append('sheetName', 'TABUNGAN');
+              q.append('id', id);
+              q.append('token', getToken());
+              return q;
+            })(),
+          });
+          const hist = await res.json();
+          const last = hist[hist.length - 1];
+          alert(
+            `✅ ${d.success}\nSaldo Terbaru: Rp ${Number(
+              last.saldo
+            ).toLocaleString('id-ID')}`
+          );
+          resetAllForms();
+        } else alert('❌ ' + (d.error || 'Gagal'));
+      }
+
+      async function cekSaldo() {
+        const id = idTabunganSaldo.value.trim();
+        if (!id) {
+          alert('Masukkan ID!');
+          return;
+        }
+        const f = new FormData();
+        f.append('action', 'getTabungan');
+        f.append('sheetName', 'TABUNGAN');
+        f.append('id', id);
+        f.append('token', getToken());
+        let data = await (
+          await fetch(API_URL, { method: 'POST', body: f })
+        ).json();
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
+        const last = data[data.length - 1];
+        saldoDisplay.textContent =
+          'Saldo: Rp ' + Number(last.saldo).toLocaleString('id-ID');
+        // render histori
+        historyBody.innerHTML = '';
+        data.forEach((e) => {
+          let tr = document.createElement('tr');
+          tr.innerHTML = `<td>${e.tanggal}</td>
+                        <td>Rp ${Number(e.jumlahTabungan).toLocaleString(
+                          'id-ID'
+                        )}</td>
+                        
+                        `;
+          historyBody.appendChild(tr);
+        });
+        historyContainer.classList.remove('hidden');
+      }
+
+      function resetAllForms() {
+        [
+          'idTabunganBaru',
+          'namaTabunganBaru',
+          'idTabunganInput',
+          'jumlahTabungan',
+          'idTabunganSaldo',
+        ].forEach((id) => (document.getElementById(id).value = ''));
+        saldoDisplay.textContent = 'Saldo: Rp 0';
+        historyBody.innerHTML = '';
+        historyContainer.classList.add('hidden');
+      }
+
+      document.addEventListener('DOMContentLoaded', initAuth);
+    </script>
   </body>
 </html>
