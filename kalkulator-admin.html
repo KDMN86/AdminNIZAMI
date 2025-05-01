@@ -24,17 +24,22 @@
       body {
         margin: 0;
         padding: 1rem;
-        font-family: 'Poppins', sans-serif;
+        font-family: Poppins, sans-serif;
         background: var(--bg);
         color: var(--fg);
       }
       h2 {
         text-align: center;
+        margin-bottom: 0.25rem;
+      }
+      #currentDate {
+        text-align: center;
+        font-size: 0.9rem;
+        color: #aaa;
         margin-bottom: 1rem;
-        font-size: 1.75rem;
       }
 
-      /* Dropdown */
+      /* dropdown multi-select */
       .dropdown {
         position: relative;
         margin-bottom: 1rem;
@@ -62,12 +67,12 @@
         top: calc(100% + 2px);
         left: 0;
         width: 100%;
-        max-height: 200px;
+        max-height: 150px;
         overflow-y: auto;
         background: var(--input-bg);
         border: 1px solid var(--border);
         border-radius: 5px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
         display: none;
         z-index: 10;
       }
@@ -84,12 +89,11 @@
         margin-right: 0.5rem;
       }
 
-      /* Input group */
+      /* input-group */
       .input-group {
         display: flex;
         flex-wrap: wrap;
         gap: 0.5rem;
-        justify-content: center;
         margin-bottom: 1rem;
       }
       .input-group input,
@@ -97,30 +101,29 @@
         min-height: 44px;
         padding: 0.75rem 1rem;
         font-size: 1rem;
-        background-color: var(--input-bg);
+        background: var(--input-bg);
         color: var(--fg);
         border: 1px solid var(--border);
         border-radius: 6px;
-        transition: background-color var(--transition);
-      }
-      .input-group input:focus,
-      .input-group button:focus {
-        outline: 2px solid var(--primary);
-        outline-offset: 2px;
+        transition: background var(--transition);
       }
       .input-group button {
-        cursor: pointer;
         background: var(--primary);
-        color: white;
+        color: #fff;
+        cursor: pointer;
       }
       .input-group button:hover {
         background: #0056b3;
       }
 
-      /* Table */
+      /* table */
       .table-container {
         overflow-x: auto;
-        margin-bottom: 100px;
+        margin-bottom: 8rem;
+        padding-right: 1rem;
+      }
+      #captureArea {
+        overflow: visible !important;
       }
       table {
         width: 100%;
@@ -145,30 +148,89 @@
         font-weight: bold;
         color: #fff;
       }
+      tr:nth-child(even) {
+        background: #1a1a1a;
+      }
 
-      /* Footer */
+      /* detail transaksi */
+      #transaksiDetail {
+        margin-top: 2rem;
+        background: #fff;
+        color: #000;
+        padding: 1rem;
+        border-radius: 8px;
+        font-family: Arial, sans-serif;
+      }
+      #transaksiDetail h3 {
+        font-size: 1.5rem;
+        color: #007bff;
+        margin-bottom: 0.5rem;
+      }
+      #transaksiDetail .tanggal {
+        font-weight: bold;
+        color: #37ba03;
+        margin-bottom: 1rem;
+        font-size: 1rem;
+      }
+      #transaksiDetail table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 1rem;
+      }
+      #transaksiDetail th,
+      #transaksiDetail td {
+        border: 2px solid #7e7e7e;
+        padding: 10px;
+        text-align: center;
+        color: #0d0d0d;
+      }
+      #transaksiDetail th {
+        background-color: #007bff;
+        color: #fff;
+      }
+      #transaksiDetail tbody tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+      #transaksiDetail tfoot td {
+        background: #ffffff;
+        color: #000;
+        font-weight: bold;
+      }
+
+      /* footer */
       .footer-floating {
         position: fixed;
         bottom: 0;
         left: 0;
         width: 100%;
-        height: 70px;
         background: rgba(17, 17, 17, 0.95);
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0 1rem;
-        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+        padding: 0.75rem 1rem;
+        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.5);
         z-index: 20;
       }
       .footer-floating .total {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         font-weight: bold;
+      }
+      .footer-floating .button-row {
+        display: flex;
+        gap: 0.5rem;
+        margin-right: 1rem;
+        flex-wrap: nowrap;
+      }
+      .footer-floating .button-row button {
+        flex: 1 1 auto;
+        white-space: nowrap;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
       }
       .footer-floating button {
         background: var(--success);
-        color: white;
-        padding: 0.75rem 1.5rem;
+        color: #fff;
+        padding: 0.6rem 1.2rem;
         border: none;
         border-radius: 6px;
         cursor: pointer;
@@ -178,52 +240,79 @@
         background: #218838;
       }
 
-      /* Responsiveness */
-      @media (max-width: 600px) {
-        h2 {
-          font-size: 1.5rem;
-        }
-        .input-group {
-          flex-direction: column;
-          gap: 0.75rem;
-        }
+      /* === Responsive Tablet (≤900px) === */
+      @media (max-width: 900px) {
         table {
-          min-width: 100%;
-          font-size: 0.75rem;
+          min-width: auto;
+          font-size: 0.8rem;
         }
         th,
         td {
           padding: 0.4rem;
         }
+        .input-group {
+          gap: 0.25rem;
+        }
+        .input-group input,
+        .input-group button {
+          font-size: 0.9rem;
+          padding: 0.6rem 0.8rem;
+        }
+        .dropdown-menu {
+          max-height: 120px;
+        }
         .footer-floating {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+        .footer-floating .total,
+        .footer-floating .button-row {
+          flex: 1 1 50%;
+          text-align: center;
+        }
+      }
+
+      /* === Responsive HP (≤450px) === */
+      @media (max-width: 450px) {
+        table {
+          font-size: 0.7rem;
+        }
+        th,
+        td {
+          padding: 0.3rem;
+        }
+        .input-group {
           flex-direction: column;
-          height: auto;
-          padding: 0.5rem;
           gap: 0.5rem;
         }
-        .footer-floating .total {
-          font-size: 1rem;
+        .input-group input,
+        .input-group button {
+          width: 100%;
+        }
+        .dropdown-toggle {
+          font-size: 0.9rem;
+        }
+        .footer-floating {
+          flex-direction: column;
+          align-items: stretch;
+          height: auto;
+        }
+        .footer-floating .button-row {
+          overflow-x: auto;
         }
         .footer-floating button {
           width: 100%;
-          padding: 0.6rem;
         }
       }
-      #currentDate {
-        font-size: 1rem;
-        color: var(--fg);
-        opacity: 0.75;
-        text-align: center;
-        margin-bottom: 0.5rem;
-        font-style: italic;
-      }
     </style>
+
+    <!-- html2canvas -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   </head>
   <body>
     <h2>Tambah Setoran</h2>
     <div id="currentDate"></div>
 
-    <!-- custom dropdown multi-select -->
     <div class="dropdown" id="sheetDropdown">
       <div class="dropdown-toggle" id="toggleSheets">Pilih Sheet…</div>
       <div class="dropdown-menu" id="menuSheets">
@@ -247,17 +336,17 @@
       <button onclick="resetTabel()">Reset</button>
     </div>
 
-    <div class="table-container">
+    <div id="captureArea" class="table-container">
       <table id="resultTable" class="hidden">
         <thead>
           <tr>
             <th>No</th>
             <th>Nama</th>
-            <th>Jenis Paket</th>
-            <th>Nilai Setoran (Rp)</th>
-            <th>Setoran Sebelumnya</th>
-            <th>Jumlah Setoran</th>
-            <th>Subtotal (Rp)</th>
+            <th>Paket</th>
+            <th>Nilai</th>
+            <th>Sebelum</th>
+            <th>Jumlah</th>
+            <th>Subtotal</th>
           </tr>
         </thead>
         <tbody id="resultBody"></tbody>
@@ -268,31 +357,34 @@
           </tr>
         </tfoot>
       </table>
+
+      <div id="transaksiDetail"></div>
     </div>
 
     <div id="calcFooter" class="footer-floating hidden">
       <div class="total">Total: <span id="grandTotalFloating">Rp 0</span></div>
-      <button id="submitBtn" onclick="kirimSemuaSetoran()">
-        Input Semua Setoran
-      </button>
+      <div class="button-row">
+        <button id="submitBtn" onclick="kirimSemuaSetoran()">
+          Input Semua Setoran
+        </button>
+        <button onclick="window.print()">Cetak</button>
+        <button id="saveImageBtn">Simpan JPG</button>
+      </div>
     </div>
 
     <script>
       const API_URL =
-        'https://script.google.com/macros/s/AKfycbzfK5eY9V5zlv2UmJLG-ybn5C2ncqaMpeQcbi0QSBur9RzkOHV9Gu3kCRe3J8gRUde_/exec';
+        'https://script.google.com/macros/s/AKfycbx10POzfEL1Rv0OB2CAR2g8m8GY_hZhB3674xFYvIxJpyp7zOcRdUZVToM_l5bQVW5Y/exec';
 
-      // — Multi-sheet dropdown logic —
-      const toggle = document.getElementById('toggleSheets');
-      const menu = document.getElementById('menuSheets');
+      // dropdown logic
+      const toggle = document.getElementById('toggleSheets'),
+        menu = document.getElementById('menuSheets');
       const checks = menu.querySelectorAll('input[type=checkbox]');
-
       toggle.addEventListener('click', () => menu.classList.toggle('show'));
       document.addEventListener('click', (e) => {
-        if (!document.getElementById('sheetDropdown').contains(e.target)) {
+        if (!document.getElementById('sheetDropdown').contains(e.target))
           menu.classList.remove('show');
-        }
       });
-
       function getSheetNames() {
         return Array.from(checks)
           .filter((c) => c.checked)
@@ -300,84 +392,85 @@
       }
       checks.forEach((c) =>
         c.addEventListener('change', () => {
-          const sel = getSheetNames();
-          toggle.textContent = sel.length
-            ? 'Sheet: ' + sel.join(', ')
+          toggle.textContent = getSheetNames().length
+            ? 'Sheet: ' + getSheetNames().join(', ')
             : 'Pilih Sheet…';
           loadGroupIds();
         })
       );
 
-      // — Auth helpers —
+      // auth helpers
       function getToken() {
         return localStorage.getItem('adminToken') || '';
       }
       async function initAuth() {
-        const token = getToken();
-        if (!token) return redirectLogin();
-        const f = new FormData();
+        const t = getToken();
+        if (!t) return redirect();
+        let f = new FormData();
         f.append('action', 'verifyAdmin');
-        f.append('token', token);
+        f.append('token', t);
         try {
-          const d = await (
+          let d = await (
             await fetch(API_URL, { method: 'POST', body: f })
           ).json();
-          if (!d.success) return redirectLogin();
-          return true;
+          if (!d.success) return redirect();
         } catch {
-          return redirectLogin();
+          return redirect();
         }
+        return true;
       }
-      function redirectLogin() {
+      function redirect() {
         localStorage.removeItem('adminToken');
-        alert('🔒 Token tidak valid. Silakan login ulang.');
+        alert('🔒 Login ulang');
         location.href = 'index.html';
       }
 
-      // — Load Group ID autocomplete —
+      // show date
+      function showDate() {
+        const d = new Date();
+        document.getElementById('currentDate').textContent =
+          'Tanggal: ' + d.toLocaleDateString('id-ID');
+      }
+
+      // load group IDs
       async function loadGroupIds() {
-        const sheets = getSheetNames().join(',');
-        const f = new FormData();
+        let f = new FormData();
         f.append('action', 'getGroupIds');
-        f.append('sheetNames', sheets);
+        f.append('sheetNames', getSheetNames().join(','));
         f.append('token', getToken());
         try {
-          const list = await (
+          let list = await (
             await fetch(API_URL, { method: 'POST', body: f })
           ).json();
-          const dl = document.getElementById('groupList');
+          let dl = document.getElementById('groupList');
           dl.innerHTML = '';
           list.forEach((id) => {
-            const o = document.createElement('option');
+            let o = document.createElement('option');
             o.value = id;
             dl.appendChild(o);
           });
-        } catch (e) {
-          console.error('Gagal load grup IDs', e);
-        }
+        } catch {}
       }
 
-      // — Fetch and render participants by group —
+      // cari grup
       async function cariGrup() {
-        const grup = document.getElementById('grupInput').value.trim();
-        if (!grup) return alert('Masukkan Grup ID!');
-        const tbody = document.getElementById('resultBody');
+        const g = document.getElementById('grupInput').value.trim();
+        if (!g) return alert('Masukkan Grup ID!');
+        let tbody = document.getElementById('resultBody');
         document.getElementById('resultTable').classList.remove('hidden');
         document.getElementById('calcFooter').classList.add('hidden');
         tbody.innerHTML = '<tr><td colspan="7">Loading…</td></tr>';
-
-        const f = new FormData();
+        let f = new FormData();
         f.append('action', 'getByGroup');
         f.append('sheetNames', getSheetNames().join(','));
-        f.append('group', grup);
+        f.append('group', g);
         f.append('token', getToken());
-
         try {
-          const data = await (
+          let data = await (
             await fetch(API_URL, { method: 'POST', body: f })
           ).json();
           if (data.error || !data.length) {
-            tbody.innerHTML = `<tr><td colspan="7" style="color:red;">${
+            tbody.innerHTML = `<tr><td colspan="7" style="color:red">${
               data.error || 'Data tidak ditemukan'
             }</td></tr>`;
             updateTotals();
@@ -385,28 +478,25 @@
           }
           tbody.innerHTML = data
             .map((p) => {
-              const n = +p.nilaiSetoran || 0,
+              let n = +p.nilaiSetoran || 0,
                 m = +p.setoranDilakukan || 0;
-              return `<tr data-id="${p.idPeserta}">
-              <td>${p.no}</td><td>${p.nama}</td><td>${p.jenisPaket}</td>
-              <td>${n.toLocaleString()}</td><td>${m.toLocaleString()}</td>
-              <td><input type="number" value="0" min="0" style="width:60px" oninput="hitungSubtotal(this,${n})"></td>
-              <td class="subtotal">Rp 0</td>
-            </tr>`;
+              return `<tr data-id="${p.idPeserta}"><td>${p.no}</td><td>${
+                p.nama
+              }</td><td>${
+                p.jenisPaket
+              }</td><td>${n.toLocaleString()}</td><td>${m.toLocaleString()}</td><td><input type="number" value="0" min="0" style="width:60px" oninput="hitungSubtotal(this,${n})"></td><td class="subtotal">Rp 0</td></tr>`;
             })
             .join('');
           updateTotals();
           document.getElementById('calcFooter').classList.remove('hidden');
-        } catch (e) {
-          console.error(e);
+        } catch {
           alert('Error ambil data.');
         }
       }
-
-      function hitungSubtotal(input, val) {
-        const sub = (+input.value || 0) * val;
-        input.closest('tr').querySelector('.subtotal').textContent =
-          'Rp ' + sub.toLocaleString();
+      function hitungSubtotal(i, val) {
+        let s = (+i.value || 0) * val;
+        i.closest('tr').querySelector('.subtotal').textContent =
+          'Rp ' + s.toLocaleString();
         updateTotals();
       }
       function updateTotals() {
@@ -414,7 +504,7 @@
         document
           .querySelectorAll('.subtotal')
           .forEach((c) => (t += +c.textContent.replace(/[^\d]/g, '') || 0));
-        const txt = 'Rp ' + t.toLocaleString();
+        let txt = 'Rp ' + t.toLocaleString();
         document.getElementById('grandTotalTable').textContent = txt;
         document.getElementById('grandTotalFloating').textContent = txt;
       }
@@ -424,22 +514,22 @@
         document.getElementById('resultTable').classList.add('hidden');
         document.getElementById('calcFooter').classList.add('hidden');
         updateTotals();
+        document.getElementById('transaksiDetail').innerHTML = '';
       }
 
-      // — Submit all deposits to Apps Script as addSetoranMulti —
+      // submit & detail
       async function kirimSemuaSetoran() {
-        const rows = document.querySelectorAll('#resultBody tr');
+        const rows = Array.from(document.querySelectorAll('#resultBody tr'));
         const btn = document.getElementById('submitBtn');
         btn.disabled = true;
         btn.textContent = 'Memproses…';
-
         const sheetNames = getSheetNames().join(',');
-        const tasks = Array.from(rows)
+        const tasks = rows
           .map((r) => {
             const id = r.dataset.id,
               j = +r.querySelector('input').value || 0;
             if (!id || j <= 0) return null;
-            const f = new FormData();
+            let f = new FormData();
             f.append('action', 'addSetoranMulti');
             f.append('sheetNames', sheetNames);
             f.append('idPeserta', id);
@@ -448,46 +538,65 @@
             return fetch(API_URL, { method: 'POST', body: f });
           })
           .filter((x) => x);
-
         if (!tasks.length) {
-          alert('Tidak ada setoran untuk dikirim');
+          alert('Tidak ada setoran');
           btn.disabled = false;
           btn.textContent = 'Input Semua Setoran';
           return;
         }
-
         try {
           await Promise.all(tasks);
           btn.style.backgroundColor = 'var(--danger)';
           btn.textContent = 'Terkirim!';
-          alert('✅ Semua setoran berhasil dikirim!');
+          alert('✅ Setoran berhasil!');
         } catch (e) {
           console.error(e);
           btn.disabled = false;
           btn.textContent = 'Input Semua Setoran';
-          alert('❌ Error: ' + e.message);
+          alert('❌ ' + e.message);
         }
+        // build detail
+        const today = new Date().toLocaleDateString('id-ID');
+        let total = 0,
+          html = `<h3>Detail Transaksi</h3><div class="tanggal">Tanggal: <strong>${today}</strong></div><table style="width:100%;border-collapse:collapse"><thead><tr style="background:#333;color:#fff"><th style="padding:6px">No Peserta</th><th style="padding:6px">Nama</th><th style="padding:6px">Jumlah</th><th style="padding:6px">Subtotal</th></tr></thead><tbody>`;
+        rows
+          .filter((r) => +r.querySelector('input').value > 0)
+          .forEach((r) => {
+            const no = r.children[0].textContent,
+              nama = r.children[1].textContent,
+              nilai = +r.children[3].textContent.replace(/[^\d]/g, ''),
+              j = +r.querySelector('input').value,
+              sub = nilai * j;
+            total += sub;
+            html += `<tr><td style="padding:6px">${no}</td><td style="padding:6px">${nama}</td><td style="padding:6px">${j}</td><td style="padding:6px">Rp ${sub.toLocaleString(
+              'id-ID'
+            )}</td></tr>`;
+          });
+        html += `<tr style="background:#222;color:#fff"><td colspan="3" style="text-align:right;padding:6px"><strong>Total</strong></td><td style="padding:6px"><strong>Rp ${total.toLocaleString(
+          'id-ID'
+        )}</strong></td></tr></tbody></table>`;
+        document.getElementById('transaksiDetail').innerHTML = html;
       }
 
-      // — Initialize on load —
-      document.addEventListener('DOMContentLoaded', async () => {
-        if (!(await initAuth())) return;
-        loadGroupIds();
+      // simpan JPG detail
+      document.getElementById('saveImageBtn').addEventListener('click', () => {
+        const tgt = document.getElementById('transaksiDetail');
+        html2canvas(tgt, {
+          scrollY: -window.scrollY,
+          windowWidth: document.body.scrollWidth,
+          windowHeight: tgt.scrollHeight,
+        }).then((canvas) => {
+          let a = document.createElement('a');
+          a.download = 'detail-transaksi.jpg';
+          a.href = canvas.toDataURL('image/jpeg', 1.0);
+          a.click();
+        });
       });
 
-      function formatDate(d) {
-        const dd = String(d.getDate()).padStart(2, '0');
-        const mm = String(d.getMonth() + 1).padStart(2, '0');
-        const yy = d.getFullYear();
-        return dd + '/' + mm + '/' + yy;
-      }
-      function showCurrentDate() {
-        const el = document.getElementById('currentDate');
-        if (el) el.textContent = 'Tanggal: ' + formatDate(new Date());
-      }
+      // init
       document.addEventListener('DOMContentLoaded', async () => {
         if (!(await initAuth())) return;
-        showCurrentDate();
+        showDate();
         loadGroupIds();
       });
     </script>
