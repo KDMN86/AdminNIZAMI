@@ -30,7 +30,8 @@
       }
       h2 {
         text-align: center;
-        margin-bottom: 0.25rem;
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
       }
       #currentDate {
         text-align: center;
@@ -39,32 +40,24 @@
         margin-bottom: 1rem;
       }
 
-      /* dropdown multi-select */
       .dropdown {
         position: relative;
         margin-bottom: 1rem;
       }
       .dropdown-toggle {
         width: 100%;
-        padding: 0.75rem 1rem;
+        padding: 0.6rem 1rem;
         background: var(--input-bg);
         color: var(--fg);
         border: 1px solid var(--border);
         border-radius: 5px;
         cursor: pointer;
-        user-select: none;
-        transition: border-color var(--transition);
-      }
-      .dropdown-toggle:hover {
-        border-color: var(--primary);
-      }
-      .dropdown-toggle::after {
-        content: '▾';
-        float: right;
+        display: flex;
+        justify-content: space-between;
       }
       .dropdown-menu {
         position: absolute;
-        top: calc(100% + 2px);
+        top: 100%;
         left: 0;
         width: 100%;
         max-height: 150px;
@@ -72,7 +65,6 @@
         background: var(--input-bg);
         border: 1px solid var(--border);
         border-radius: 5px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
         display: none;
         z-index: 10;
       }
@@ -89,23 +81,20 @@
         margin-right: 0.5rem;
       }
 
-      /* input-group */
       .input-group {
-        display: flex;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: 1fr auto auto;
         gap: 0.5rem;
         margin-bottom: 1rem;
       }
       .input-group input,
       .input-group button {
-        min-height: 44px;
-        padding: 0.75rem 1rem;
+        padding: 0.5rem 1rem;
         font-size: 1rem;
         background: var(--input-bg);
         color: var(--fg);
         border: 1px solid var(--border);
         border-radius: 6px;
-        transition: background var(--transition);
       }
       .input-group button {
         background: var(--primary);
@@ -116,28 +105,21 @@
         background: #0056b3;
       }
 
-      /* table */
       .table-container {
         overflow-x: auto;
-        margin-bottom: 8rem;
-        padding-right: 1rem;
-      }
-      #captureArea {
-        overflow: visible !important;
+        margin-bottom: 1rem;
       }
       table {
         width: 100%;
         border-collapse: collapse;
         margin-top: 0.5rem;
-        min-width: 600px;
+        font-size: 0.85rem;
       }
       th,
       td {
         border: 1px solid #555;
         padding: 0.5rem;
         text-align: center;
-        font-size: 0.85rem;
-        color: var(--fg);
       }
       th {
         background: var(--primary);
@@ -151,162 +133,135 @@
       tr:nth-child(even) {
         background: #1a1a1a;
       }
+      td input[type='number'] {
+        width: 4rem;
+      }
 
-      /* detail transaksi */
       #transaksiDetail {
-        margin-top: 2rem;
+        margin-top: 1rem;
         background: #fff;
         color: #000;
         padding: 1rem;
         border-radius: 8px;
-        font-family: Arial, sans-serif;
       }
       #transaksiDetail h3 {
-        font-size: 1.5rem;
-        color: #007bff;
-        margin-bottom: 0.5rem;
+        margin-top: 0;
+        color: var(--primary);
       }
       #transaksiDetail .tanggal {
         font-weight: bold;
         color: #37ba03;
-        margin-bottom: 1rem;
-        font-size: 1rem;
+        margin-bottom: 0.5rem;
       }
       #transaksiDetail table {
         width: 100%;
         border-collapse: collapse;
-        font-size: 1rem;
       }
       #transaksiDetail th,
       #transaksiDetail td {
-        border: 2px solid #7e7e7e;
-        padding: 10px;
+        border: 1px solid #555;
+        padding: 0.5rem;
         text-align: center;
-        color: #0d0d0d;
       }
       #transaksiDetail th {
-        background-color: #007bff;
+        background: var(--primary);
         color: #fff;
       }
-      #transaksiDetail tbody tr:nth-child(even) {
-        background-color: #f2f2f2;
-      }
-      #transaksiDetail tfoot td {
-        background: #ffffff;
-        color: #000;
-        font-weight: bold;
+      #transaksiDetail tr:nth-child(even) {
+        background: #f2f2f2;
       }
 
-      /* footer */
       .footer-floating {
         position: fixed;
         bottom: 0;
         left: 0;
         width: 100%;
-        background: rgba(17, 17, 17, 0.95);
+        background: rgba(17, 17, 17, 0.9);
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0.75rem 1rem;
+        padding: 0.5rem 1rem;
         box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.5);
-        z-index: 20;
       }
       .footer-floating .total {
         font-size: 1.1rem;
         font-weight: bold;
       }
-      .footer-floating .button-row {
-        display: flex;
-        gap: 0.5rem;
-        margin-right: 1rem;
-        flex-wrap: nowrap;
-      }
-      .footer-floating .button-row button {
-        flex: 1 1 auto;
-        white-space: nowrap;
-        padding: 0.5rem 1rem;
-        font-size: 0.9rem;
-      }
       .footer-floating button {
         background: var(--success);
         color: #fff;
-        padding: 0.6rem 1.2rem;
+        padding: 0.5rem 1rem;
         border: none;
         border-radius: 6px;
         cursor: pointer;
-        transition: background var(--transition);
       }
       .footer-floating button:hover {
         background: #218838;
       }
+      .footer-floating button.danger {
+        background: var(--danger) !important;
+      }
 
-      /* === Responsive Tablet (≤900px) === */
-      @media (max-width: 900px) {
+      @media (max-width: 768px) {
+        .input-group {
+          grid-template-columns: 1fr auto;
+          grid-template-rows: auto auto;
+        }
+        .input-group button:nth-child(3) {
+          grid-column: span 2;
+        }
         table {
-          min-width: auto;
           font-size: 0.8rem;
         }
         th,
         td {
           padding: 0.4rem;
         }
-        .input-group {
-          gap: 0.25rem;
-        }
-        .input-group input,
-        .input-group button {
-          font-size: 0.9rem;
-          padding: 0.6rem 0.8rem;
-        }
-        .dropdown-menu {
-          max-height: 120px;
-        }
-        .footer-floating {
-          flex-wrap: wrap;
-          justify-content: center;
-        }
-        .footer-floating .total,
-        .footer-floating .button-row {
-          flex: 1 1 50%;
-          text-align: center;
-        }
       }
-
-      /* === Responsive HP (≤450px) === */
-      @media (max-width: 450px) {
-        table {
-          font-size: 0.7rem;
-        }
+      @media (max-width: 480px) {
+        table,
+        thead,
+        tbody,
         th,
+        td,
+        tr {
+          display: block;
+        }
+        thead {
+          display: none;
+        }
+        tr {
+          margin-bottom: 1rem;
+          border: 1px solid var(--border);
+          border-radius: 6px;
+          overflow: hidden;
+        }
         td {
-          padding: 0.3rem;
+          display: flex;
+          justify-content: space-between;
+          padding: 0.5rem;
+          border: none;
+          border-bottom: 1px solid #555;
         }
-        .input-group {
-          flex-direction: column;
-          gap: 0.5rem;
+        td::before {
+          content: attr(data-label);
+          font-weight: bold;
+          flex: 1;
+          text-align: left;
+          padding-right: 1rem;
         }
-        .input-group input,
-        .input-group button {
-          width: 100%;
-        }
-        .dropdown-toggle {
-          font-size: 0.9rem;
+        td:last-child {
+          border-bottom: none;
         }
         .footer-floating {
           flex-direction: column;
           align-items: stretch;
-          height: auto;
         }
         .footer-floating .button-row {
-          overflow-x: auto;
-        }
-        .footer-floating button {
-          width: 100%;
+          justify-content: center;
         }
       }
     </style>
-
-    <!-- html2canvas -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   </head>
   <body>
@@ -336,7 +291,7 @@
       <button onclick="resetTabel()">Reset</button>
     </div>
 
-    <div id="captureArea" class="table-container">
+    <div class="table-container">
       <table id="resultTable" class="hidden">
         <thead>
           <tr>
@@ -344,7 +299,7 @@
             <th>Nama</th>
             <th>Paket</th>
             <th>Nilai</th>
-            <th>Sebelum</th>
+            <th>Sebelumnya</th>
             <th>Jumlah</th>
             <th>Subtotal</th>
           </tr>
@@ -357,9 +312,9 @@
           </tr>
         </tfoot>
       </table>
-
-      <div id="transaksiDetail"></div>
     </div>
+
+    <div id="transaksiDetail"></div>
 
     <div id="calcFooter" class="footer-floating hidden">
       <div class="total">Total: <span id="grandTotalFloating">Rp 0</span></div>
@@ -367,7 +322,6 @@
         <button id="submitBtn" onclick="kirimSemuaSetoran()">
           Input Semua Setoran
         </button>
-        <button onclick="window.print()">Cetak</button>
         <button id="saveImageBtn">Simpan JPG</button>
       </div>
     </div>
@@ -375,7 +329,6 @@
     <script>
       const API_URL =
         'https://script.google.com/macros/s/AKfycbx10POzfEL1Rv0OB2CAR2g8m8GY_hZhB3674xFYvIxJpyp7zOcRdUZVToM_l5bQVW5Y/exec';
-
       // dropdown logic
       const toggle = document.getElementById('toggleSheets'),
         menu = document.getElementById('menuSheets');
@@ -392,106 +345,90 @@
       }
       checks.forEach((c) =>
         c.addEventListener('change', () => {
-          toggle.textContent = getSheetNames().length
-            ? 'Sheet: ' + getSheetNames().join(', ')
+          const s = getSheetNames();
+          toggle.textContent = s.length
+            ? 'Sheet: ' + s.join(',')
             : 'Pilih Sheet…';
           loadGroupIds();
         })
       );
 
-      // auth helpers
-      function getToken() {
-        return localStorage.getItem('adminToken') || '';
-      }
-      async function initAuth() {
-        const t = getToken();
+      // auth & init
+      async function init() {
+        const t = localStorage.getItem('adminToken');
         if (!t) return redirect();
         let f = new FormData();
         f.append('action', 'verifyAdmin');
         f.append('token', t);
-        try {
-          let d = await (
-            await fetch(API_URL, { method: 'POST', body: f })
-          ).json();
-          if (!d.success) return redirect();
-        } catch {
-          return redirect();
-        }
-        return true;
+        const d = await (await fetch(API_URL, { method: 'POST', body: f }))
+          .json()
+          .catch(() => {});
+        if (!d || !d.success) return redirect();
+        showDate();
+        loadGroupIds();
       }
       function redirect() {
         localStorage.removeItem('adminToken');
         alert('🔒 Login ulang');
         location.href = 'index.html';
       }
-
-      // show date
       function showDate() {
-        const d = new Date();
         document.getElementById('currentDate').textContent =
-          'Tanggal: ' + d.toLocaleDateString('id-ID');
+          'Tanggal: ' + new Date().toLocaleDateString('id-ID');
       }
-
-      // load group IDs
       async function loadGroupIds() {
         let f = new FormData();
         f.append('action', 'getGroupIds');
         f.append('sheetNames', getSheetNames().join(','));
-        f.append('token', getToken());
-        try {
-          let list = await (
-            await fetch(API_URL, { method: 'POST', body: f })
-          ).json();
-          let dl = document.getElementById('groupList');
-          dl.innerHTML = '';
-          list.forEach((id) => {
-            let o = document.createElement('option');
-            o.value = id;
-            dl.appendChild(o);
-          });
-        } catch {}
+        f.append('token', localStorage.getItem('adminToken'));
+        const list = await (await fetch(API_URL, { method: 'POST', body: f }))
+          .json()
+          .catch(() => []);
+        const dl = document.getElementById('groupList');
+        dl.innerHTML = '';
+        list.forEach((id) => {
+          let o = document.createElement('option');
+          o.value = id;
+          dl.appendChild(o);
+        });
       }
 
-      // cari grup
+      // fetch & render
       async function cariGrup() {
         const g = document.getElementById('grupInput').value.trim();
         if (!g) return alert('Masukkan Grup ID!');
-        let tbody = document.getElementById('resultBody');
+        const tb = document.getElementById('resultBody');
         document.getElementById('resultTable').classList.remove('hidden');
         document.getElementById('calcFooter').classList.add('hidden');
-        tbody.innerHTML = '<tr><td colspan="7">Loading…</td></tr>';
+        tb.innerHTML = '<tr><td colspan="7">Loading…</td></tr>';
         let f = new FormData();
         f.append('action', 'getByGroup');
         f.append('sheetNames', getSheetNames().join(','));
         f.append('group', g);
-        f.append('token', getToken());
-        try {
-          let data = await (
-            await fetch(API_URL, { method: 'POST', body: f })
-          ).json();
-          if (data.error || !data.length) {
-            tbody.innerHTML = `<tr><td colspan="7" style="color:red">${
-              data.error || 'Data tidak ditemukan'
-            }</td></tr>`;
-            updateTotals();
-            return;
-          }
-          tbody.innerHTML = data
-            .map((p) => {
-              let n = +p.nilaiSetoran || 0,
-                m = +p.setoranDilakukan || 0;
-              return `<tr data-id="${p.idPeserta}"><td>${p.no}</td><td>${
-                p.nama
-              }</td><td>${
-                p.jenisPaket
-              }</td><td>${n.toLocaleString()}</td><td>${m.toLocaleString()}</td><td><input type="number" value="0" min="0" style="width:60px" oninput="hitungSubtotal(this,${n})"></td><td class="subtotal">Rp 0</td></tr>`;
-            })
-            .join('');
+        f.append('token', localStorage.getItem('adminToken'));
+        const data = await (await fetch(API_URL, { method: 'POST', body: f }))
+          .json()
+          .catch(() => []);
+        if (data.error || !data.length) {
+          tb.innerHTML = `<tr><td colspan="7" style="color:red">${
+            data.error || 'Data tidak ditemukan'
+          }</td></tr>`;
           updateTotals();
-          document.getElementById('calcFooter').classList.remove('hidden');
-        } catch {
-          alert('Error ambil data.');
+          return;
         }
+        tb.innerHTML = data
+          .map((p) => {
+            let n = +p.nilaiSetoran || 0,
+              m = +p.setoranDilakukan || 0;
+            return `<tr data-id="${p.idPeserta}"><td>${p.no}</td><td>${
+              p.nama
+            }</td><td>${
+              p.jenisPaket
+            }</td><td>${n.toLocaleString()}</td><td>${m.toLocaleString()}</td><td><input type="number" min="0" value="0" oninput="hitungSubtotal(this,${n})"></td><td class="subtotal" data-label="Subtotal">Rp 0</td></tr>`;
+          })
+          .join('');
+        updateTotals();
+        document.getElementById('calcFooter').classList.remove('hidden');
       }
       function hitungSubtotal(i, val) {
         let s = (+i.value || 0) * val;
@@ -503,7 +440,7 @@
         let t = 0;
         document
           .querySelectorAll('.subtotal')
-          .forEach((c) => (t += +c.textContent.replace(/[^\d]/g, '') || 0));
+          .forEach((c) => (t += +c.textContent.replace(/[^\d]/g, '')));
         let txt = 'Rp ' + t.toLocaleString();
         document.getElementById('grandTotalTable').textContent = txt;
         document.getElementById('grandTotalFloating').textContent = txt;
@@ -523,18 +460,18 @@
         const btn = document.getElementById('submitBtn');
         btn.disabled = true;
         btn.textContent = 'Memproses…';
-        const sheetNames = getSheetNames().join(',');
-        const tasks = rows
+        btn.classList.remove('danger');
+        let tasks = rows
           .map((r) => {
-            const id = r.dataset.id,
+            let id = r.dataset.id,
               j = +r.querySelector('input').value || 0;
             if (!id || j <= 0) return null;
             let f = new FormData();
             f.append('action', 'addSetoranMulti');
-            f.append('sheetNames', sheetNames);
+            f.append('sheetNames', getSheetNames().join(','));
             f.append('idPeserta', id);
             f.append('setoranBaru', j);
-            f.append('token', getToken());
+            f.append('token', localStorage.getItem('adminToken'));
             return fetch(API_URL, { method: 'POST', body: f });
           })
           .filter((x) => x);
@@ -544,37 +481,26 @@
           btn.textContent = 'Input Semua Setoran';
           return;
         }
-        try {
-          await Promise.all(tasks);
-          btn.style.backgroundColor = 'var(--danger)';
-          btn.textContent = 'Terkirim!';
-          alert('✅ Setoran berhasil!');
-        } catch (e) {
-          console.error(e);
-          btn.disabled = false;
-          btn.textContent = 'Input Semua Setoran';
-          alert('❌ ' + e.message);
-        }
-        // build detail
+        await Promise.all(tasks);
+        btn.textContent = 'Terkirim!';
+        btn.classList.add('danger');
+        alert('✅ Sukses');
+        // build detail with date
         const today = new Date().toLocaleDateString('id-ID');
-        let total = 0,
-          html = `<h3>Detail Transaksi</h3><div class="tanggal">Tanggal: <strong>${today}</strong></div><table style="width:100%;border-collapse:collapse"><thead><tr style="background:#333;color:#fff"><th style="padding:6px">No Peserta</th><th style="padding:6px">Nama</th><th style="padding:6px">Jumlah</th><th style="padding:6px">Subtotal</th></tr></thead><tbody>`;
+        let html = `<h3>Detail Transaksi</h3><table><thead><tr><th>No</th><th>Nama</th><th>Setoran Sebelumnya</th><th>Jumlah Setoran</th><th>Subtotal</th></tr></thead><tbody>`;
+        let total = 0;
         rows
           .filter((r) => +r.querySelector('input').value > 0)
           .forEach((r) => {
-            const no = r.children[0].textContent,
+            let no = r.children[0].textContent,
               nama = r.children[1].textContent,
-              nilai = +r.children[3].textContent.replace(/[^\d]/g, ''),
+              prev = +r.children[4].textContent.replace(/[^\d]/g, ''),
               j = +r.querySelector('input').value,
-              sub = nilai * j;
+              sub = +r.children[3].textContent.replace(/[^\d]/g, '') * j;
             total += sub;
-            html += `<tr><td style="padding:6px">${no}</td><td style="padding:6px">${nama}</td><td style="padding:6px">${j}</td><td style="padding:6px">Rp ${sub.toLocaleString(
-              'id-ID'
-            )}</td></tr>`;
+            html += `<tr><td>${no}</td><td>${nama}</td><td>${prev.toLocaleString()}</td><td>${j}</td><td>Rp ${sub.toLocaleString()}</td></tr>`;
           });
-        html += `<tr style="background:#222;color:#fff"><td colspan="3" style="text-align:right;padding:6px"><strong>Total</strong></td><td style="padding:6px"><strong>Rp ${total.toLocaleString(
-          'id-ID'
-        )}</strong></td></tr></tbody></table>`;
+        html += `</tbody><tfoot><tr><td colspan="4">Total</td><td>Rp ${total.toLocaleString()}</td></tr></tfoot></table>`;
         document.getElementById('transaksiDetail').innerHTML = html;
       }
 
@@ -593,12 +519,7 @@
         });
       });
 
-      // init
-      document.addEventListener('DOMContentLoaded', async () => {
-        if (!(await initAuth())) return;
-        showDate();
-        loadGroupIds();
-      });
+      document.addEventListener('DOMContentLoaded', init);
     </script>
   </body>
 </html>
