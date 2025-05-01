@@ -219,46 +219,38 @@
         }
       }
       @media (max-width: 480px) {
-        table,
-        thead,
-        tbody,
+        /* biarkan table tetap table dan bisa scroll */
+        .table-container {
+          overflow-x: auto;
+        }
+        table {
+          font-size: 0.8rem;
+        }
         th,
-        td,
-        tr {
-          display: block;
-        }
-        thead {
-          display: none;
-        }
-        tr {
-          margin-bottom: 1rem;
-          border: 1px solid var(--border);
-          border-radius: 6px;
-          overflow: hidden;
-        }
         td {
-          display: flex;
-          justify-content: space-between;
+          padding: 0.4rem;
+        }
+
+        #transaksiDetail {
+          font-size: 0.8rem;
           padding: 0.5rem;
-          border: none;
-          border-bottom: 1px solid #555;
         }
-        td::before {
-          content: attr(data-label);
-          font-weight: bold;
-          flex: 1;
-          text-align: left;
-          padding-right: 1rem;
+        #transaksiDetail table {
+          width: 100%;
+          font-size: 0.8rem;
         }
-        td:last-child {
-          border-bottom: none;
+        #transaksiDetail th,
+        #transaksiDetail td {
+          padding: 0.4rem;
+          word-break: break-word;
         }
+
+        /* footer responsive tetap */
         .footer-floating {
           flex-direction: column;
-          align-items: stretch;
         }
-        .footer-floating .button-row {
-          justify-content: center;
+        .input-group button:nth-child(2) {
+          grid-column: span 2;
         }
       }
     </style>
@@ -487,7 +479,7 @@
         alert('✅ Sukses');
         // build detail with date
         const today = new Date().toLocaleDateString('id-ID');
-        let html = `<h3>Detail Transaksi</h3><table><thead><tr><th>No</th><th>Nama</th><th>Setoran Sebelumnya</th><th>Jumlah Setoran</th><th>Subtotal</th></tr></thead><tbody>`;
+        let html = `<h3>Detail Transaksi</h3><div class="tanggal">Tanggal: <strong>${today}</strong></div><table><thead><tr><th>No</th><th>Nama</th><th>Setoran Sebelumnya</th><th>Jumlah Setoran</th><th>Subtotal</th></tr></thead><tbody>`;
         let total = 0;
         rows
           .filter((r) => +r.querySelector('input').value > 0)
