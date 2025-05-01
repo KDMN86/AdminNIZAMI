@@ -232,7 +232,7 @@
         }
 
         #transaksiDetail {
-          font-size: 0.8rem;
+          font-size: 0.7rem;
           padding: 0.5rem;
         }
         #transaksiDetail table {
@@ -248,9 +248,11 @@
         /* footer responsive tetap */
         .footer-floating {
           flex-direction: column;
+          font-size: 0.7rem;
+          padding: 0.5rem;
         }
-        .input-group button:nth-child(2) {
-          grid-column: span 2;
+        .input-group button:nth-child(3) {
+          grid-column: span 3;
         }
       }
     </style>
@@ -280,7 +282,6 @@
       />
       <datalist id="groupList"></datalist>
       <button onclick="cariGrup()">Cek Data</button>
-      <button onclick="resetTabel()">Reset</button>
     </div>
 
     <div class="table-container">
@@ -314,6 +315,7 @@
         <button id="submitBtn" onclick="kirimSemuaSetoran()">
           Input Semua Setoran
         </button>
+        <button onclick="resetTabel()">Reset</button>
         <button id="saveImageBtn">Simpan JPG</button>
       </div>
     </div>
